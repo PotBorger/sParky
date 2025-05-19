@@ -81,8 +81,6 @@ export default function Home() {
             <FlameButton text="Learn More" />
             <SecondaryButton text="View Air Quality Map" />
           </div>
-
-          <AirQualityIndicator />
         </div>
       </section>
     </div>
