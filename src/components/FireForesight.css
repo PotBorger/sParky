@@ -10,8 +10,8 @@ body {
 .home-container {
   min-height: 100vh;
   background-image: url("/assets/images/main-background.png");
-
   /* background-image: linear-gradient(to bottom, #111827, #000000); */
+  background-repeat: no-repeat;
   color: white;
   padding: 24px;
 }
