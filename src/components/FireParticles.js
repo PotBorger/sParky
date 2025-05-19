@@ -1,7 +1,7 @@
 export default function FireParticles() {
   return (
     <div className="fire-particles">
-      {[...Array(6)].map((_, i) => (
+      {[...Array(8)].map((_, i) => (
         <div
           key={i}
           className="particle"

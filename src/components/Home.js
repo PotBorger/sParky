@@ -73,8 +73,7 @@ export default function Home() {
 
           <p className="main-description">
             Predict wildfires before they ignite and know how they'll impact
-            your air. Our model forecasts fire risk and air quality so you can
-            stay safe and informed.
+            your air.
           </p>
 
           <div className="buttons-container">

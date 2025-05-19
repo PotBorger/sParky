@@ -49,11 +49,14 @@ body {
 }
 
 .particle {
+  background-image: url("/assets/images/flame-img.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
   position: absolute;
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 9999px;
-  background-color: rgba(252, 211, 77, 0.2); /* amber-300 with opacity */
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 100%;
+  background-color: rgba(0, 0, 0, 0); /* amber-300 with opacity */
   animation: float ease-in-out infinite;
 }
 
