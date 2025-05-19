@@ -9,7 +9,9 @@ body {
 /* Base styles */
 .home-container {
   min-height: 100vh;
-  background-image: linear-gradient(to bottom, #111827, #000000);
+  background-image: url("/assets/images/main-background.png");
+
+  /* background-image: linear-gradient(to bottom, #111827, #000000); */
   color: white;
   padding: 24px;
 }
@@ -53,8 +55,8 @@ body {
   background-size: 100%;
   background-repeat: no-repeat;
   position: absolute;
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 100%;
   background-color: rgba(0, 0, 0, 0); /* amber-300 with opacity */
   animation: float ease-in-out infinite;
