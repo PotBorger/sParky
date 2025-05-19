@@ -6,8 +6,8 @@ export default function FireParticles() {
           key={i}
           className="particle"
           style={{
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 80}%`,
+            left: `${20 + Math.random() * 80}%`,
+            top: `${20 + Math.random() * 80}%`,
             animationDuration: `${3 + Math.random() * 5}s`,
             animationDelay: `${Math.random() * 2}s`,
           }}

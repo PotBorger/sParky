@@ -26,29 +26,29 @@ const FlameButton = ({ text }) => (
 );
 
 // Secondary button component
-const SecondaryButton = ({ text }) => (
-  <button className="secondary-button">{text}</button>
-);
+// const SecondaryButton = ({ text }) => (
+//   <button className="secondary-button">{text}</button>
+// );
 
 // Background particles for visual effect
 
 // Air quality indicator with progress bar
-const AirQualityIndicator = () => {
-  // In a real app, this would come from an API or context
-  const quality = 75;
+// const AirQualityIndicator = () => {
+//   // In a real app, this would come from an API or context
+//   const quality = 75;
 
-  return (
-    <div className="air-quality-container">
-      <div className="air-quality-header">
-        <span>Air Quality</span>
-        <span>{quality}% Good</span>
-      </div>
-      <div className="progress-bar-bg">
-        <div className="progress-bar-fill" style={{ width: `${quality}%` }} />
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="air-quality-container">
+//       <div className="air-quality-header">
+//         <span>Air Quality</span>
+//         <span>{quality}% Good</span>
+//       </div>
+//       <div className="progress-bar-bg">
+//         <div className="progress-bar-fill" style={{ width: `${quality}%` }} />
+//       </div>
+//     </div>
+//   );
+// };
 
 // Page title component with gradient text
 const PageTitle = ({ children }) => (
@@ -63,12 +63,8 @@ export default function Home() {
     <div className="home-container">
       <section className="main-section">
         <FireParticles />
-
         <div className="content-container">
-          <TechBadge
-            className="tech-badge"
-            text="Predicted Using Machine Learning"
-          />
+          <TechBadge className="tech-badge" text="Forecasts Made With AI" />
           <PageTitle>Fire Foresight. Clean Air Insight.</PageTitle>
 
           <p className="main-description">
@@ -77,8 +73,8 @@ export default function Home() {
           </p>
 
           <div className="buttons-container">
-            <FlameButton text="Learn More" />
-            <SecondaryButton text="View Air Quality Map" />
+            <FlameButton text="Get Started" />
+            {/* <SecondaryButton text="View Air Quality Map" /> */}
           </div>
         </div>
       </section>
