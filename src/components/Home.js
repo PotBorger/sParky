@@ -1,13 +1,14 @@
 // src/components/Home.js
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./FireForesight.css";
 import TechBadge from "./TechBadge";
 import FireParticles from "./FireParticles";
 
-// Button component with arrow icon
-const FlameButton = ({ text, onClick }) => (
-  <button className="flame-button" onClick={onClick}>
+/** Button with flame arrow */
+const FlameButton = ({ text }) => (
+  <button className="flame-button">
     <span className="button-content">
       {text}
       <svg
@@ -28,6 +29,7 @@ const FlameButton = ({ text, onClick }) => (
   </button>
 );
 
+/** Page title styling */
 const PageTitle = ({ children }) => (
   <div className="page-title-container">
     <h1 className="page-title">{children}</h1>
@@ -35,20 +37,7 @@ const PageTitle = ({ children }) => (
 );
 
 export default function Home() {
-  const [showInput, setShowInput] = useState(false);
-  const [address, setAddress] = useState("");
-  const navigate = useNavigate();
-
-  const handleGetStarted = () => {
-    setShowInput(true);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && address.trim() !== "") {
-      // Redirect to /map (you can also pass the address via state or query)
-      navigate("/map");
-    }
-  };
+  const [initialLocation, setInitialLocation] = useState("");
 
   return (
     <div className="home-container">
@@ -57,27 +46,32 @@ export default function Home() {
         <div className="content-container">
           <TechBadge className="tech-badge" text="Forecasts Made With AI" />
           <PageTitle>Fire Foresight. Clean Air Insight.</PageTitle>
+
           <p className="main-description">
-            Predict wildfires before they ignite and know how they'll impact your air.
+            Predict wildfires before they ignite and know how they'll impact
+            your air.
           </p>
 
-          <div className="buttons-container">
-            <FlameButton text="Get Started" onClick={handleGetStarted} />
+          {/* Address input, centered under the button */}
+          <div className="address-input-box">
+            <input
+              type="text"
+              className="address-input"
+              placeholder="Enter a location"
+              value={initialLocation}
+              onChange={(e) => setInitialLocation(e.target.value)}
+            />
           </div>
 
-          {showInput && (
-            <div className="address-input-box">
-              <input
-                type="text"
-                className="address-input"
-                placeholder="Enter your address and press Enter"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                onKeyDown={handleKeyDown}
-                autoFocus
-              />
-            </div>
-          )}
+          <div className="buttons-container">
+            <Link
+              to={`/map?initialLocation=${encodeURIComponent(
+                initialLocation
+              )}`}
+            >
+              <FlameButton text="Get Started" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

@@ -323,7 +323,7 @@ body {
   margin: 0 auto;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* slightly stronger shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
 }
 
 .map-container {
@@ -334,29 +334,33 @@ body {
 
 
 /* Center the input under the button */
-/* Center the input under the button */
 .address-input-box {
   display: flex;
-  justify-content: center;  /* horizontally center the child */
-  margin-top: 1.5rem;
+  justify-content: center;
+  margin: 1.5rem;
 }
 
 /* Constrain & style the input */
 .address-input {
   width: 100%;
-  max-width: 400px;         /* keeps it the same width as your hero box */
-  box-sizing: border-box;   /* include padding in that width */
+  max-width: 400px;
+  box-sizing: border-box;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
-/* Optional: center placeholder text, tweak color */
+/* Placeholder styling */
 .address-input::placeholder {
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
 }
+
+
+
+
+
 
