@@ -9,7 +9,7 @@ export default function Map() {
 
   const mapContainer = useRef(null);
   useEffect(() => {
-    const apiKey = "concacmemay"
+    const apiKey = "con cac me may"
       const region = "us-east-2";
       const styleName = "Standard";
       const colorScheme = "Dark";
@@ -17,8 +17,8 @@ export default function Map() {
     const map = new maplibregl.Map({
       container: mapContainer.current,
       style: `https://maps.geo.${region}.amazonaws.com/v2/styles/${styleName}/descriptor?key=${apiKey}&color-scheme=${colorScheme}`,
-      center: [-123.115898, 49.295868],
-      zoom: 11
+      center: [ -111.876183,40.758701],
+      zoom: 10
     });
 
     map.addControl(new maplibregl.NavigationControl(), "top-left");
