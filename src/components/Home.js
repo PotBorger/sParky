@@ -1,10 +1,13 @@
-import React from "react";
+// src/components/Home.js
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./FireForesight.css";
 import TechBadge from "./TechBadge";
 import FireParticles from "./FireParticles";
+
 // Button component with arrow icon
-const FlameButton = ({ text }) => (
-  <button className="flame-button">
+const FlameButton = ({ text, onClick }) => (
+  <button className="flame-button" onClick={onClick}>
     <span className="button-content">
       {text}
       <svg
@@ -25,40 +28,28 @@ const FlameButton = ({ text }) => (
   </button>
 );
 
-// Secondary button component
-// const SecondaryButton = ({ text }) => (
-//   <button className="secondary-button">{text}</button>
-// );
-
-// Background particles for visual effect
-
-// Air quality indicator with progress bar
-// const AirQualityIndicator = () => {
-//   // In a real app, this would come from an API or context
-//   const quality = 75;
-
-//   return (
-//     <div className="air-quality-container">
-//       <div className="air-quality-header">
-//         <span>Air Quality</span>
-//         <span>{quality}% Good</span>
-//       </div>
-//       <div className="progress-bar-bg">
-//         <div className="progress-bar-fill" style={{ width: `${quality}%` }} />
-//       </div>
-//     </div>
-//   );
-// };
-
-// Page title component with gradient text
 const PageTitle = ({ children }) => (
   <div className="page-title-container">
     <h1 className="page-title">{children}</h1>
   </div>
 );
 
-// Main home component
 export default function Home() {
+  const [showInput, setShowInput] = useState(false);
+  const [address, setAddress] = useState("");
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    setShowInput(true);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && address.trim() !== "") {
+      // Redirect to /map (you can also pass the address via state or query)
+      navigate("/map");
+    }
+  };
+
   return (
     <div className="home-container">
       <section className="main-section">
@@ -66,18 +57,27 @@ export default function Home() {
         <div className="content-container">
           <TechBadge className="tech-badge" text="Forecasts Made With AI" />
           <PageTitle>Fire Foresight. Clean Air Insight.</PageTitle>
-
           <p className="main-description">
-            Predict wildfires before they ignite and know how they'll impact
-            your air.
+            Predict wildfires before they ignite and know how they'll impact your air.
           </p>
 
           <div className="buttons-container">
-            <a href="/map">
-            <FlameButton text="Get Started" />
-            </a>
-            {/* <SecondaryButton text="View Air Quality Map" /> */}
+            <FlameButton text="Get Started" onClick={handleGetStarted} />
           </div>
+
+          {showInput && (
+            <div className="address-input-box">
+              <input
+                type="text"
+                className="address-input"
+                placeholder="Enter your address and press Enter"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>
