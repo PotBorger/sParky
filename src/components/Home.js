@@ -73,7 +73,9 @@ export default function Home() {
           </p>
 
           <div className="buttons-container">
+            <a href="/map">
             <FlameButton text="Get Started" />
+            </a>
             {/* <SecondaryButton text="View Air Quality Map" /> */}
           </div>
         </div>
