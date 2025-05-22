@@ -1,0 +1,251 @@
+/* AQIBar.css */
+
+/* ─── Health Advice Text ───────────────────────────────────────────────────── */
+.aqi-advice {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #e0e0e0;
+}
+.aqi-advice strong {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ─── Container ────────────────────────────────────────────────────────────── */
+.aqi-bar-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  user-select: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 100, 0, 0.3);
+  overflow: hidden;
+  z-index: 1000;
+  pointer-events: auto;
+  
+
+}
+
+.aqi-below-map {
+  margin: 16px auto;       /* spacing above the box */
+  width: 90%;
+  max-width: 400px;
+}
+
+
+/* ─── Fire Particles Background ────────────────────────────────────────────── */
+.fire-particles {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.particle {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: radial-gradient(circle, #ff6b35 0%, #ff4500 50%, transparent 70%);
+  border-radius: 50%;
+  animation: float 3s infinite ease-in-out;
+  opacity: 0.7;
+}
+/* particle positions & timings… */
+@keyframes float {
+  0%   { bottom: -10px; opacity: 0;   transform: translateX(0)    scale(0.5); }
+  20%  { opacity: 0.7; transform: translateX(-10px) scale(1);    }
+  40%  { opacity: 0.8; transform: translateX(10px)  scale(1.2);  }
+  60%  { opacity: 0.6; transform: translateX(-5px)  scale(0.9);  }
+  80%  { opacity: 0.3; transform: translateX(8px)   scale(0.7);  }
+  100% { bottom: 100%; opacity: 0;   transform: translateX(-15px) scale(0.3); }
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+.aqi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+}
+.aqi-main-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.aqi-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.aqi-level {
+  font-size: 16px;
+  font-weight: 500;
+  color: #80ED99; /* match light-green “Good” */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Controls ─────────────────────────────────────────────────────────────── */
+.aqi-controls {
+  display: flex;
+  gap: 8px;
+}
+.aqi-expand-btn,
+.aqi-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.aqi-expand-btn {
+  background: linear-gradient(135deg, #80ED99 0%, #FFE066 100%);
+  color: #1a1a1a;
+  border: 1px solid rgba(128, 237, 153, 0.3);
+}
+.aqi-expand-btn:hover {
+  background: linear-gradient(135deg, #FFE066 0%, #FF6B6B 100%);
+  box-shadow: 0 4px 12px rgba(255, 230, 102, 0.4);
+}
+.aqi-close-btn {
+  background: linear-gradient(135deg, #444 0%, #222 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.aqi-close-btn:hover {
+  background: linear-gradient(135deg, #555 0%, #333 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Chart Section ───────────────────────────────────────────────────────── */
+.aqi-chart-section {
+  position: relative;
+  margin-bottom: 16px;
+  z-index: 10;
+}
+/* make segments relative so that pointer’s left is inside it */
+.aqi-bar-segments {
+  position: relative;
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e0e0e0;
+}
+
+/* the fill */
+.aqi-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 6px;
+  /* remove the gradient and use a solid color */
+  background-color: #2ED572;   /* default “Good” color */
+  box-shadow: 0 0 8px rgba(46, 213, 114, 0.5);
+  transition:
+    width 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.5s ease;
+}
+
+/* pointer inside the same container */
+.aqi-bar-pointer {
+  position: absolute;
+  top: -6px;
+  left: 0;            /* we’ll animate this */
+  width: 4px;
+  height: 24px;
+  background: #fff;
+  border: 2px solid;  /* color set inline */
+  border-radius: 2px;
+  transform: translateX(-50%); /* center the pointer on its left */
+  transition: left 1.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+
+/* New location line */
+.aqi-location {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+
+/* ─── Pointer ──────────────────────────────────────────────────────────────── */
+.aqi-bar-pointer {
+  position: absolute;
+  top: -6px;
+  left: 0;                /* anchor at left edge */
+  transform: translateX(0);/* start here */
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 4px;
+  height: 24px;
+  background: #ffffff;
+  border: 2px solid #80ED99; /* match “Good” color */
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(128, 237, 153, 0.6), 0 0 20px rgba(128, 237, 153, 0.3);
+  pointer-events: none;
+}
+.aqi-bar-pointer.animating {
+  animation: glow 1.5s ease-out;
+}
+@keyframes glow {
+  0%   { box-shadow: 0 2px 8px rgba(128,237,153,0.6), 0 0 20px rgba(128,237,153,0.3); }
+  50%  { box-shadow: 0 2px 8px rgba(128,237,153,0.8), 0 0 30px rgba(128,237,153,0.6), 0 0 40px rgba(255,255,255,0.4); }
+  100% { box-shadow: 0 2px 8px rgba(128,237,153,0.6), 0 0 20px rgba(128,237,153,0.3); }
+}
+
+/* ─── Recommendation Box ──────────────────────────────────────────────────── */
+.aqi-recommendation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(40, 40, 40, 0.8);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #80ED99;
+  position: relative;
+  z-index: 10;
+}
+
+/* ─── Responsive Adjustments ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .aqi-bar-container {
+    width: 90%;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+  }
+  .aqi-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .aqi-controls {
+    align-self: stretch;
+  }
+  .aqi-expand-btn,
+  .aqi-close-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .aqi-recommendation {
+    flex-direction: column;
+    text-align: center;
+  }
+}

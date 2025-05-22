@@ -1,5 +1,4 @@
-// src/components/WildFireMap.js
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -13,11 +12,15 @@ import GeoPlaces from "../util.js";
 import "../components/FireForesight.css";
 
 import { useLocation } from "react-router-dom";
+import AQIBar from "./AQIBar.js";
 
 export default function WildFireMap() {
   const mapContainer = useRef(null);
   const { search } = useLocation();
   const initialLocation = new URLSearchParams(search).get("initialLocation");
+
+  const [selectedAQI, setSelectedAQI] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
     let map, geocoderControl;
@@ -43,7 +46,7 @@ export default function WildFireMap() {
       const placesClient = new GeoPlacesClient(authHelper.getClientConfig());
       const geoPlaces = new GeoPlaces(placesClient, map);
 
-      // 3) Add the geocoder (search) control
+      // 3) Add the geocoder (search) control - but disable auto-fly
       geocoderControl = new MaplibreGeocoder(geoPlaces, {
         maplibregl,
         showResultsWhileTyping: true,
@@ -58,24 +61,23 @@ export default function WildFireMap() {
         }</span>
           </div>`,
         zoom: 14,
+        flyTo: true, 
       });
       map.addControl(geocoderControl, "bottom-right");
 
-      // 4) Fly on initial load if we have a param
+      // 4) Handle initial location without any movement
       if (initialLocation) {
-        geocoderControl.query(initialLocation);
+        // Just query but don't move the map
+        console.log("Initial location provided:", initialLocation);
       }
 
-      // 5) Fly on every selection thereafter
+      // 5) Handle geocoder results without any map movement
       geocoderControl.on("result", ({ result }) => {
-        map.flyTo({
-          center: result.geometry.coordinates,
-          zoom: 14,
-          speed: 1.2,
-        });
+        // Just log the result, don't move the map at all
+        console.log("Geocoder result:", result.place_name);
       });
-      // at the top of WildFireMap.js, before your useEffect:
-      const flameUrl = `localhost:3000/assets/images/flame-img.png`;
+
+      // Updated geojson with realistic AQI values
       const geojson = {
         type: "FeatureCollection",
         features: [
@@ -86,8 +88,10 @@ export default function WildFireMap() {
               coordinates: [-111.876183, 40.758701],
             },
             properties: {
-              label: "Patna",
+              label: "Salt Lake City",
               color: "#FF5722",
+              aqi: 89,
+              message: "Salt Lake City - AQI: 89 (Moderate)"
             },
           },
           {
@@ -99,6 +103,8 @@ export default function WildFireMap() {
             properties: {
               label: "Patna",
               color: "#FF5722",
+              aqi: 156,
+              message: "Patna - AQI: 156 (Unhealthy)"
             },
           },
           {
@@ -110,6 +116,8 @@ export default function WildFireMap() {
             properties: {
               label: "Delhi",
               color: "#2196F3",
+              aqi: 234,
+              message: "Delhi - AQI: 234 (Very Unhealthy)"
             },
           },
           {
@@ -121,6 +129,8 @@ export default function WildFireMap() {
             properties: {
               label: "Bangalore",
               color: "#FF9800",
+              aqi: 67,
+              message: "Bangalore - AQI: 67 (Moderate)"
             },
           },
           {
@@ -132,6 +142,8 @@ export default function WildFireMap() {
             properties: {
               label: "Hyderabad",
               color: "#9C27B0",
+              aqi: 98,
+              message: "Hyderabad - AQI: 98 (Moderate)"
             },
           },
           {
@@ -143,6 +155,8 @@ export default function WildFireMap() {
             properties: {
               label: "Chicago",
               color: "#4CAF50",
+              aqi: 43,
+              message: "Chicago - AQI: 43 (Good)"
             },
           },
           {
@@ -154,6 +168,8 @@ export default function WildFireMap() {
             properties: {
               label: "Seattle",
               color: "#FFC107",
+              aqi: 72,
+              message: "Seattle - AQI: 72 (Moderate)"
             },
           },
           {
@@ -165,6 +181,8 @@ export default function WildFireMap() {
             properties: {
               label: "Brussels",
               color: "#3F51B5",
+              aqi: 38,
+              message: "Brussels - AQI: 38 (Good)"
             },
           },
           {
@@ -176,6 +194,8 @@ export default function WildFireMap() {
             properties: {
               label: "Paris",
               color: "#E91E63",
+              aqi: 54,
+              message: "Paris - AQI: 54 (Moderate)"
             },
           },
           {
@@ -187,6 +207,8 @@ export default function WildFireMap() {
             properties: {
               label: "London",
               color: "#795548",
+              aqi: 61,
+              message: "London - AQI: 61 (Moderate)"
             },
           },
           {
@@ -198,6 +220,8 @@ export default function WildFireMap() {
             properties: {
               label: "Johannesburg",
               color: "#673AB7",
+              aqi: 87,
+              message: "Johannesburg - AQI: 87 (Moderate)"
             },
           },
           {
@@ -209,6 +233,8 @@ export default function WildFireMap() {
             properties: {
               label: "Vancouver",
               color: "#FF5722",
+              aqi: 134,
+              message: "Vancouver - AQI: 134 (Unhealthy for Sensitive Groups)"
             },
           },
           {
@@ -220,6 +246,8 @@ export default function WildFireMap() {
             properties: {
               label: "Denver",
               color: "#FF9800",
+              aqi: 78,
+              message: "Denver - AQI: 78 (Moderate)"
             },
           },
           {
@@ -231,6 +259,8 @@ export default function WildFireMap() {
             properties: {
               label: "Austin",
               color: "#3F51B5",
+              aqi: 45,
+              message: "Austin - AQI: 45 (Good)"
             },
           },
         ],
@@ -250,24 +280,32 @@ export default function WildFireMap() {
         el.style.backgroundRepeat = "no-repeat";
         el.style.width = `30px`;
         el.style.height = `30px`;
+        el.style.cursor = "pointer";
+        
+
         el.addEventListener("click", () => {
-          window.alert(marker.properties.message);
+          // Set the AQI value without moving the map
+          setSelectedAQI(marker.properties.aqi);
+          setSelectedLocation(marker.properties.label);
         });
 
-        // add marker to map
-        new maplibregl.Marker({ element: el })
-          .setLngLat(marker.geometry.coordinates)
-          .addTo(map);
+        new maplibregl.Marker({
+            element: el,
+            draggable: false
+          })
+            .setLngLat(marker.geometry.coordinates)
+            .addTo(map);
       });
     })();
 
     return () => map?.remove();
-  }, [initialLocation]);
+  }, [initialLocation, setSelectedAQI, setSelectedLocation]);
 
   return (
     <div className="map-page-container">
       <div className="map-wrapper">
         <div ref={mapContainer} className="map-container" />
+        <AQIBar aqi={selectedAQI} location={selectedLocation} />
       </div>
     </div>
   );

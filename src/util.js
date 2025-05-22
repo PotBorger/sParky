@@ -27,7 +27,7 @@ export default class GeoPlaces {
       const req = {
         QueryText:    config.query,
         BiasPosition: [center.lng, center.lat],
-        Language:     "en",
+        Language:     "en",t
       };
       const resp = await this.client.send(new SearchTextCommand(req));
       return {
