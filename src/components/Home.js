@@ -95,9 +95,7 @@ export default function Home() {
 
           <div className="buttons-container">
             <Link
-              to={`/map?initialLocation=${encodeURIComponent(
-                initialLocation
-              )}`}
+              to={`/map?initialLocation=${encodeURIComponent(initialLocation)}`}
             >
               <FlameButton text="Get Started" disabled={!initialLocation} />
             </Link>
