@@ -23,7 +23,7 @@ export default function WildFireMap() {
     let map, geocoderControl;
 
     (async () => {
-      const API_KEY    = process.env.REACT_APP_AWS_API_KEY || "v1.public.eyJqdGkiOiIzNmM1MzNhZS1hNWJmLTQyMTktYThkMS0zMjg4MzAyNjA4ZjAifZPWOa39wtCGvDjJmttFwCm4zkdalftZs3Ji3RAX9kVSZkOAdYa-7_PpYqIgNpEo9fdQKETt_WfZMIocXxq0KBLKs4xTRDnOHPAvvvMJC7JaPjqOALbfhA8r4EQQExAUwAFeSiS0akLbGQMtbAqM3kbjCed4terPXAlWgaoUy2QqOLdG0Rn3NcS-ejaPoqViRsHIb68iE0LVwhQk7_ZR--d5QKTQSCzWW0drXW8xEnebgXAhD1nJG7b5KqdhlAKBzUouGoPCuTzZrTGThxXeDfjd7AOi_5rD4zFA9rNbe4drOiUFrC5fNihCKVLj1Y9lqBKxyE5wgu7q-2AzoYTpOCs.ZWU0ZWIzMTktMWRhNi00Mzg0LTllMzYtNzlmMDU3MjRmYTkx";
+      const API_KEY= process.env.REACT_APP_AWS_API_KEY || "v1.public.eyJqdGkiOiIzNmM1MzNhZS1hNWJmLTQyMTktYThkMS0zMjg4MzAyNjA4ZjAifZPWOa39wtCGvDjJmttFwCm4zkdalftZs3Ji3RAX9kVSZkOAdYa-7_PpYqIgNpEo9fdQKETt_WfZMIocXxq0KBLKs4xTRDnOHPAvvvMJC7JaPjqOALbfhA8r4EQQExAUwAFeSiS0akLbGQMtbAqM3kbjCed4terPXAlWgaoUy2QqOLdG0Rn3NcS-ejaPoqViRsHIb68iE0LVwhQk7_ZR--d5QKTQSCzWW0drXW8xEnebgXAhD1nJG7b5KqdhlAKBzUouGoPCuTzZrTGThxXeDfjd7AOi_5rD4zFA9rNbe4drOiUFrC5fNihCKVLj1Y9lqBKxyE5wgu7q-2AzoYTpOCs.ZWU0ZWIzMTktMWRhNi00Mzg0LTllMzYtNzlmMDU3MjRmYTkx";
       const AWS_REGION = process.env.REACT_APP_AWS_REGION  || "us-east-1";
 
       // 1) Initialize MapLibre

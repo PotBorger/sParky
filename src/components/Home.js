@@ -41,8 +41,10 @@ export default function Home() {
 
   return (
     <div className="home-container">
+      {/* Move FireParticles here so it covers the full viewport */}
+      <FireParticles />
+
       <section className="main-section">
-        <FireParticles />
         <div className="content-container">
           <TechBadge className="tech-badge" text="Forecasts Made With AI" />
           <PageTitle>Fire Foresight. Clean Air Insight.</PageTitle>

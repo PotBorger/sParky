@@ -1,29 +1,37 @@
-// FireParticles.js
+// src/components/FireParticles.js
 import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import './FireForesight.css';
 
 export default function FireParticles() {
-  // Pre-generate random positions & timings once
-  const particles = useMemo(() => 
-    Array.from({ length: 6 }).map(() => ({
-      left: `${10 + Math.random() * 80}%`,
-      top: `${10 + Math.random() * 80}%`,
-      animationDuration: `${3 + Math.random() * 5}s`,
-      animationDelay: `${Math.random() * 2}s`,
-    }))
-  , []);
+  const { pathname } = useLocation();
+  // only show embers on the root path
+  if (pathname !== '/') return null;
+
+  // generate 50 random embers
+  const sparks = useMemo(
+    () =>
+      Array.from({ length: 50 }).map(() => ({
+        left: `${Math.random() * 100}%`,
+        size: `${1 + Math.random() * 3}px`,
+        duration: `${3 + Math.random() * 4}s`,
+        delay: `${-Math.random() * 5}s`,
+      })),
+    []
+  );
 
   return (
     <div className="fire-particles">
-      {particles.map((p, i) => (
+      {sparks.map((s, i) => (
         <div
           key={i}
-          className="particle"
+          className="ember"
           style={{
-            left: p.left,
-            top: p.top,
-            animationDuration: p.animationDuration,
-            animationDelay: p.animationDelay,
+            left: s.left,
+            width: s.size,
+            height: s.size,
+            animationDuration: s.duration,
+            animationDelay: s.delay,
           }}
         />
       ))}
