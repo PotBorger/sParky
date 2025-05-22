@@ -14,8 +14,8 @@
 
 /* ─── Container ────────────────────────────────────────────────────────────── */
 .aqi-bar-container {
-  position: absolute;
-  top: 50%;
+  position: relative;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -30%);
   background: rgba(20, 20, 20, 0.95);
@@ -30,7 +30,6 @@
   z-index: 1000;
   pointer-events: auto;
   
-
 }
 
 .aqi-below-map {
