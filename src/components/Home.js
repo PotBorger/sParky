@@ -7,8 +7,8 @@ import TechBadge from "./TechBadge";
 import FireParticles from "./FireParticles";
 
 /** Button with flame arrow */
-const FlameButton = ({ text }) => (
-  <button className="flame-button">
+const FlameButton = ({ text, disabled }) => (
+  <button className="flame-button" disabled={disabled}>
     <span className="button-content">
       {text}
       <svg
@@ -25,7 +25,7 @@ const FlameButton = ({ text }) => (
         />
       </svg>
     </span>
-    <span className="button-highlight"></span>
+    <span className="button-highlight" />
   </button>
 );
 
@@ -38,10 +38,31 @@ const PageTitle = ({ children }) => (
 
 export default function Home() {
   const [initialLocation, setInitialLocation] = useState("");
+  const [loadingGeo, setLoadingGeo] = useState(false);
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    setLoadingGeo(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const { latitude, longitude } = coords;
+        // round to 4 decimals for brevity
+        setInitialLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        setLoadingGeo(false);
+      },
+      (err) => {
+        console.error("Geo error:", err);
+        alert("Unable to retrieve location");
+        setLoadingGeo(false);
+      }
+    );
+  };
 
   return (
     <div className="home-container">
-      {/* Move FireParticles here so it covers the full viewport */}
       <FireParticles />
 
       <section className="main-section">
@@ -54,7 +75,6 @@ export default function Home() {
             your air.
           </p>
 
-          {/* Address input, centered under the button */}
           <div className="address-input-box">
             <input
               type="text"
@@ -63,6 +83,14 @@ export default function Home() {
               value={initialLocation}
               onChange={(e) => setInitialLocation(e.target.value)}
             />
+            <button
+              className="geo-btn"
+              onClick={handleUseMyLocation}
+              disabled={loadingGeo}
+              title={loadingGeo ? "Locating…" : "Use my current location"}
+            >
+              {loadingGeo ? "⏳" : "📍"}
+            </button>
           </div>
 
           <div className="buttons-container">
@@ -71,7 +99,7 @@ export default function Home() {
                 initialLocation
               )}`}
             >
-              <FlameButton text="Get Started" />
+              <FlameButton text="Get Started" disabled={!initialLocation} />
             </Link>
           </div>
         </div>
