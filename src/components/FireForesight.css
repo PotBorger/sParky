@@ -265,3 +265,58 @@ body {
   width: 100%;
   height: 60vh;
 }
+
+
+/* ensure badge lays out dot + text inline */
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background-color: rgba(252, 211, 77, 0.1);
+  color: rgb(252, 211, 77);
+}
+
+/* wrapper for the dot + ping */
+.pulse-container {
+  position: relative;
+  display: flex;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+/* expanding + fading ping ring */
+.pulse-ping {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: rgb(251, 191, 36);
+  opacity: 0.75;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* solid center dot */
+.pulse-dot {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: rgb(245, 158, 11);
+}
+
+/* keyframes for the ping effect */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
