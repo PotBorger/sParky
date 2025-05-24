@@ -1,3 +1,4 @@
+// AQIBar.jsx
 import React, { useRef, useEffect, useState } from 'react';
 import "./AQIBar.css";
 
@@ -24,78 +25,84 @@ function getAQILevel(aqi) {
 export default function AQIBar({ aqi, location }) {
   const fillRef    = useRef();
   const pointerRef = useRef();
+  const [expanded, setExpanded] = useState(false);
+  const [visible,  setVisible]  = useState(true);
 
+  // whenever AQI **or** location changes, re-show the bar
   useEffect(() => {
-  if (aqi == null) return;
+    if (aqi != null) setVisible(true);
+  }, [aqi, location]);
 
-  // 1) figure out exact pointer pct (0–1) and category
-  const pct    = Math.min(Math.max(aqi, 0), 500) / 500;
-  const { label, color, description } = getAQILevel(aqi);
+  // animation effect, but only if refs exist
+  useEffect(() => {
+    if (aqi == null) return;
+    if (!fillRef.current || !pointerRef.current) return;
 
-  // 2) decide the discrete fill fraction
-  let frac;
-  if (label === "Good")      frac = 1/3;
-  else if (label === "Moderate") frac = 2/3;
-  else                         frac = 1;
+    const { label, color } = getAQILevel(aqi);
+    const frac = label === "Good"
+      ? 1/3
+      : label === "Moderate"
+        ? 2/3
+        : 1;
 
-  // ——— HERE: set the solid fill color & target width ———
-  fillRef.current.style.backgroundColor = color;
-  fillRef.current.style.width           = `0%`;  // start from zero
+    // reset
+    fillRef.current.style.backgroundColor = color;
+    fillRef.current.style.width           = '0%';
+    fillRef.current.style.transition      = 'none';
+    pointerRef.current.style.transition   = 'none';
+    pointerRef.current.style.left         = '0%';
+    pointerRef.current.style.borderColor  = color;
 
-  // 3) reset both fill and pointer instantly
-  fillRef.current.style.transition    = 'none';
-  pointerRef.current.style.transition = 'none';
-  pointerRef.current.style.left       = '0%';
-  pointerRef.current.style.borderColor = color;
-
-
-  // 4) next frame: animate to your frac & pointer pct
-  requestAnimationFrame(() => {
-    // fill
-    fillRef.current.style.transition = 'width 1.5s cubic-bezier(0.4,0,0.2,1)';
-    fillRef.current.style.width      = `${frac * 100}%`;
-
-
-    // pointer
-    pointerRef.current.style.transition = 'left 1.5s cubic-bezier(0.4,0,0.2,1)';
-    pointerRef.current.style.left       = `${frac * 100}%`;
-  });
+    // animate
+    requestAnimationFrame(() => {
+      fillRef.current.style.transition    = 'width 1.5s cubic-bezier(0.4,0,0.2,1)';
+      fillRef.current.style.width         = `${frac * 100}%`;
+      pointerRef.current.style.transition = 'left 1.5s cubic-bezier(0.4,0,0.2,1)';
+      pointerRef.current.style.left       = `${frac * 100}%`;
+    });
   }, [aqi]);
 
-  if (aqi == null) return null;
+  if (!visible || aqi == null) return null;
 
   const { label, color, description } = getAQILevel(aqi);
 
-  // Dynamic fill: 1/3 for Good, 2/3 for Moderate, 100% otherwise
-  let fillFrac;
-  if (label === "Good") fillFrac = 1 / 3;
-  else if (label === "Moderate") fillFrac = 2 / 3;
-  else fillFrac = 1;
-
   return (
-    <div className="aqi-bar-container" style={{ border: `1px solid ${color}` }}>
-      <div className = "aqi-location">{location || "Click  a marker to see AQI"}</div>
+    <div
+      className={`aqi-bar-container${expanded ? ' expanded' : ''}`}
+      style={{ border: `1px solid ${color}` }}
+    >
+      <div className="aqi-location">
+        {location || "Click a marker to see AQI"}
+      </div>
 
       <div className="fire-particles">
         {[...Array(12)].map((_, i) => (
-          <div key={i} className={`particle particle-${i + 1}`}></div>
+          <div key={i} className={`particle particle-${i+1}`}></div>
         ))}
       </div>
 
       <div className="aqi-header">
         <div className="aqi-main-label">
           <span className="aqi-value">PM2.5 AQI: {aqi}</span>
-        <span className="aqi-level" style={{ color: getAQILevel(aqi).color }}>
-            {label}
-        </span>
+          <span className="aqi-level" style={{ color }}>{label}</span>
         </div>
         <div className="aqi-controls">
-          <button className="aqi-expand-btn">Expand</button>
-          <button className="aqi-close-btn">Close</button>
+          <button
+            className="aqi-expand-btn"
+            onClick={() => setExpanded(e => !e)}
+          >
+            {expanded ? 'Minimize' : 'Expand'}
+          </button>
+          <button
+            className="aqi-close-btn"
+            onClick={() => setVisible(false)}
+          >
+            Close
+          </button>
         </div>
       </div>
 
-     <div className="aqi-chart-section">
+      <div className="aqi-chart-section">
         <div className="aqi-bar-segments">
           {segments.map(seg => (
             <div
@@ -104,14 +111,7 @@ export default function AQIBar({ aqi, location }) {
               style={{ flex: seg.range / 500 }}
             />
           ))}
-
-          {/* the fill that grows */}
-          <div
-            ref={fillRef}
-            className="aqi-progress-fill"
-          />
-
-          {/* the pointer that rides the end */}
+          <div ref={fillRef} className="aqi-progress-fill" />
           <div
             ref={pointerRef}
             className="aqi-bar-pointer"
@@ -123,8 +123,17 @@ export default function AQIBar({ aqi, location }) {
       <div className="aqi-recommendation">
         <div className="aqi-advice">
           <strong>Health Advisory:</strong> {description}. Consider limiting
-          outdoor activities if sensitive to air pollution.
+          outdoor activities if you’re sensitive to air pollution.
         </div>
+      </div>
+
+      <div className="aqi-expand-section">
+        <h3>Wildfire Impact Details</h3>
+        <p>
+          Detailed information about nearby wildfires, smoke plumes, visibility,
+          wind direction and how they affect this AQI reading.
+        </p>
+        {/* …more info here… */}
       </div>
     </div>
   );
