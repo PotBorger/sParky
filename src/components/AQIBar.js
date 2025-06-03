@@ -1,4 +1,5 @@
-// AQIBar.jsx
+// src/AQIBar.jsx
+
 import React, { useRef, useEffect, useState } from 'react';
 import "./AQIBar.css";
 
@@ -25,15 +26,32 @@ function getAQILevel(aqi) {
 export default function AQIBar({ aqi, location }) {
   const fillRef    = useRef();
   const pointerRef = useRef();
-  const [expanded, setExpanded] = useState(false);
-  const [visible,  setVisible]  = useState(true);
+  const [expanded, setExpanded]     = useState(false);
+  const [visible,  setVisible]      = useState(true);
+  const [wildfireData, setWildfireData] = useState(null); // will hold the fetched JSON
 
-  // whenever AQI **or** location changes, re-show the bar
+  // Whenever AQI or location changes, re-show the bar and re-fetch JSON
   useEffect(() => {
-    if (aqi != null) setVisible(true);
+    if (aqi != null) {
+      setVisible(true);
+
+      // Fetch the JSON from public/response.json
+      fetch('/response.json')
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then(data => {
+          setWildfireData(data);
+        })
+        .catch(err => {
+          console.error("Failed to load wildfire data:", err);
+          setWildfireData(null);
+        });
+    }
   }, [aqi, location]);
 
-  // animation effect, but only if refs exist
+  // Bar‐fill animation (same as before)
   useEffect(() => {
     if (aqi == null) return;
     if (!fillRef.current || !pointerRef.current) return;
@@ -129,11 +147,26 @@ export default function AQIBar({ aqi, location }) {
 
       <div className="aqi-expand-section">
         <h3>Wildfire Impact Details</h3>
-        <p>
-          Detailed information about nearby wildfires, smoke plumes, visibility,
-          wind direction and how they affect this AQI reading.
-        </p>
-        {/* …more info here… */}
+
+        {/* Only render once we have wildfireData */}
+        {wildfireData ? (
+          <div className="expand-content">
+            <p><strong>Impacted AQI:</strong> {wildfireData.impactedAQI}</p>
+            <p><strong>Description:</strong> {wildfireData.description}</p>
+            <div className="advice-list">
+              <strong>Advice:</strong>
+              <ul>
+                {wildfireData.advice.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <p style={{ color: '#ccc', fontStyle: 'italic' }}>
+            Loading wildfire data…
+          </p>
+        )}
       </div>
     </div>
   );

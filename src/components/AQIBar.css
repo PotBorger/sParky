@@ -32,8 +32,6 @@
   transition: all 0.3s ease;
 }
 
-/* ─── (No width change on expand; container keeps its original width) ─────── */
-
 /* ─── Optional below-map variant ──────────────────────────────────────────── */
 .aqi-below-map {
   margin: 16px auto;
@@ -199,10 +197,46 @@
   border-radius: 8px;
   color: #fff;
 }
+
+/* When the container has .expanded, show and pad the expand section */
 .aqi-bar-container.expanded .aqi-expand-section {
   opacity: 1;
   max-height: 500px;
   padding: 12px;
+}
+
+/* ─── Content Styling Inside Expand Panel ─────────────────────────────────── */
+.aqi-expand-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.3);
+  padding-bottom: 4px;
+}
+
+.aqi-expand-section p {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e0e0e0;
+}
+
+.aqi-expand-section .advice-list {
+  margin-top: 8px;
+}
+
+.aqi-expand-section .advice-list ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 4px 0;
+}
+
+.aqi-expand-section .advice-list li {
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #ccc;
 }
 
 /* ─── Recommendation Box ──────────────────────────────────────────────────── */
