@@ -181,64 +181,6 @@
   text-align: center;
 }
 
-/* ─── Expanded Wildfire Info Panel ────────────────────────────────────────── */
-.aqi-expand-section {
-  width: 100%;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  margin-top: 16px;
-  padding: 0 12px;
-  transition:
-    opacity 0.3s ease,
-    max-height 0.3s ease,
-    padding 0.3s ease;
-  background: rgba(30, 30, 30, 0.9);
-  border-radius: 8px;
-  color: #fff;
-}
-
-/* When the container has .expanded, show and pad the expand section */
-.aqi-bar-container.expanded .aqi-expand-section {
-  opacity: 1;
-  max-height: 500px;
-  padding: 12px;
-}
-
-/* ─── Content Styling Inside Expand Panel ─────────────────────────────────── */
-.aqi-expand-section h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  border-bottom: 1px solid rgba(100, 100, 100, 0.3);
-  padding-bottom: 4px;
-}
-
-.aqi-expand-section p {
-  margin: 6px 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #e0e0e0;
-}
-
-.aqi-expand-section .advice-list {
-  margin-top: 8px;
-}
-
-.aqi-expand-section .advice-list ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-  margin: 4px 0;
-}
-
-.aqi-expand-section .advice-list li {
-  margin-bottom: 4px;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #ccc;
-}
-
 /* ─── Recommendation Box ──────────────────────────────────────────────────── */
 .aqi-recommendation {
   display: flex;
@@ -250,6 +192,81 @@
   border-left: 4px solid #80ED99;
   position: relative;
   z-index: 10;
+}
+
+/* ─── Expanded Wildfire Info Panel ────────────────────────────────────────── */
+/* Default hidden state */
+.aqi-expand-section {
+  /* Ensure padding is included within its own width */
+  box-sizing: border-box;
+
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 16px;
+  padding: 0 12px;
+  transition:
+    opacity 0.3s ease,
+    max-height 0.3s ease,
+    padding 0.3s ease;
+
+  /* Much darker red background */
+  background: #4E0000;
+  border-radius: 8px;
+  color: #fff;
+}
+
+/* Visible when container has .expanded */
+.aqi-bar-container.expanded .aqi-expand-section {
+  opacity: 1;
+  max-height: 600px; /* increase if you need more space */
+  padding: 16px 12px;
+}
+
+/* ─── Content Styling Inside Expand Panel ─────────────────────────────────── */
+/* Section title */
+.aqi-expand-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #ffcc66;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.3);
+  padding-bottom: 6px;
+}
+
+/* Paragraphs */
+.aqi-expand-section .expand-content p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+/* Advice list container */
+.aqi-expand-section .advice-list {
+  margin-top: 12px;
+}
+
+/* Bullet list */
+.aqi-expand-section .advice-list ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 6px 0 0 0;
+}
+
+/* List items */
+.aqi-expand-section .advice-list li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+/* Ensure the expand-content block has a little spacing around it */
+.aqi-expand-section .expand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* ─── Responsive Adjustments ──────────────────────────────────────────────── */
@@ -275,5 +292,10 @@
   .aqi-recommendation {
     flex-direction: column;
     text-align: center;
+  }
+  /* Make sure expanded content doesn’t overflow off-screen */
+  .aqi-bar-container.expanded .aqi-expand-section {
+    max-height: 800px;
+    padding: 16px 8px;
   }
 }
