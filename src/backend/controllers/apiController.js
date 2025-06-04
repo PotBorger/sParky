@@ -4,13 +4,17 @@ const API_KEY = "df23feb6c17d01620d3577d05641b174";
 
 export const getCurrentAQ = async (req, res) => {
   try {
-    // Hard-code
-    const latitude = 40.7705;
-    const longitude = -111.9076;
+    // Pull lat/lon from query string
+    const latitude = req.query.lat;
+    const longitude = req.query.lon;
 
-    // OpenWeather Air Pollution endpoint
+    if (!latitude || !longitude) {
+      return res.status(400).json({ error: "lat and lon are required" });
+    }
+
     const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
     const response = await axios.get(url);
+
     const resultObject = {
       currentAQI: response.data.list[0].main.aqi,
       currentPM25: response.data.list[0].components.pm2_5,
