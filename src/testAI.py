@@ -9,20 +9,56 @@ to a SageMaker real-time endpoint. If the container still 500s, check CloudWatch
 import boto3
 import json
 import sys
+import requests
+import os
+
+def fetch_from_local(lat, lon):
+    params = {
+        "lat": lat,
+        "lon": lon
+    }
+
+    try:
+        resp = requests.get("http://localhost:5001/api/currentDataClimate", params=params, timeout=5)
+        resp.raise_for_status()
+        payload = resp.json()
+
+        data = payload["result"]
+
+        max_temp = float(data["currentMaxTemp"])
+        min_temp = float(data["currentMinTemp"])
+        precipitation = float(data["currentPrecipitation"])
+        avg_wind_speed = float(data["currentWindSpeed"])
+
+        return min_temp, max_temp, precipitation, avg_wind_speed
+    
+    except requests.RequestException as e:
+        print("Request to local API failed:", e)
+        sys.exit(1)
+    except (KeyError, ValueError) as e:
+        print("Unexpected response structure or invalid data:", e)
+        print("Full payload:", payload)
+        sys.exit(1)
+
+
 
 def main():
     # ─── 1) Change this to your real endpoint name ──────────────────────────────────
     endpoint_name = "canvas-fire-predict"
-
-    # ─── 2) Prompt for four float inputs ───────────────────────────────────────────
+    coord_file = "currentCoord.json"
+    # if not os.path.isFile(coord_file):
+    #     print(f"Error: '{coord_file}' not found in the current directory.")
+    #     sys.exit(1)
     try:
-        min_temp        = float(input("Enter MIN_TEMP (e.g. 45.0): ").strip())
-        max_temp        = float(input("Enter MAX_TEMP (e.g. 75.0): ").strip())
-        precipitation   = float(input("Enter PRECIPITATION (e.g. 0.12): ").strip())
-        avg_wind_speed  = float(input("Enter AVG_WIND_SPEED (e.g. 5.5): ").strip())
-    except ValueError:
-        print("⛔ Invalid input: please enter valid numeric values.")
+        with open(coord_file, "r") as f:
+           coords = json.load(f)
+        latitude  = float(coords["currentLat"])
+        longitude = float(coords["currentLon"])
+    except (json.JSONDecodeError, KeyError, ValueError) as e:
+        print(f"Error parsing '{coord_file}':", e)
         sys.exit(1)
+
+    min_temp, max_temp, precipitation, avg_wind_speed = fetch_from_local(latitude, longitude)
 
     # ─── 3) Build a CSV payload with a trailing newline ─────────────────────────────
     #     (No header row. Order must exactly match the four training columns.)
@@ -40,7 +76,7 @@ def main():
         )
     except Exception as e:
         # If you still see a 500, it will surface here.
-        print(f"⛔ Error invoking endpoint: {e}")
+        print(f"Error invoking endpoint: {e}")
         print("Check CloudWatch logs for `/aws/sagemaker/Endpoints/{}`".format(endpoint_name))
         sys.exit(1)
 
@@ -49,13 +85,13 @@ def main():
     try:
         result = json.loads(raw_body)
     except json.JSONDecodeError:
-        print("⛔ Received non-JSON response from container:")
+        print("Received non-JSON response from container:")
         print(raw_body)
         print("Again, check CloudWatch logs for `/aws/sagemaker/Endpoints/{}`".format(endpoint_name))
         sys.exit(1)
 
     # ─── 6) Print the prediction JSON ───────────────────────────────────────────────
-    print("\n✅ Prediction result:")
+    print("\n Prediction result:")
     print(json.dumps(result, indent=4))
 
 
