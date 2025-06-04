@@ -89,6 +89,23 @@ export default function Home() {
     }
   };
 
+
+  const fetchDataClimate = async () => {
+     if (!latitude || !longitude) {
+      alert("You need a latitude and longitude first");
+      return;
+    }
+
+    try{
+      const response = await axios.get(
+        `http://localhost:5001/api/currentDataClimate?lat=${latitude}&lon=${longitude}`
+      );
+      console.log("Climate result:", response.data);
+    }catch(error){
+      console.error("API error", error.response?.status, error.message);
+    }
+  };
+
   return (
     <div className="home-container">
       <FireParticles />
@@ -134,6 +151,12 @@ export default function Home() {
           <div style={{ marginTop: "1rem" }}>
             <SecondaryButton text="Check AQ" onClick={fetchAQ} />
           </div>
+
+
+          <div style={{ marginTop: "1rem" }}>
+            <SecondaryButton text="Check DataClimate" onClick={fetchDataClimate} />
+          </div>
+          
         </div>
       </section>
     </div>
