@@ -27,10 +27,10 @@ export default function WildFireMap() {
   const saveToJson = async (lon, lat) => {
     try {
       await axios.post("http://localhost:5001/api/save-coord", { lon, lat });
-      console.log("✅ Coord written to server");
+      console.log("Coord written to server");
     } catch (err) {
       console.error(err);
-      console.log("❌ Failed to save on server");
+      console.log("Failed to save on server");
     }
   };
 
@@ -49,6 +49,7 @@ export default function WildFireMap() {
         zoom: 10,
         validateStyle: false,
       });
+
       map.addControl(new maplibregl.NavigationControl(), "top-left");
 
       // 2) Create AWS Places client + adapter
@@ -56,9 +57,10 @@ export default function WildFireMap() {
       const placesClient = new GeoPlacesClient(authHelper.getClientConfig());
       const geoPlaces = new GeoPlaces(placesClient, map);
 
-      // 3) Add the geocoder (search) control - but disable auto-fly
+      // Add the geocoder (search) control - but disable auto-fly
       geocoderControl = new MaplibreGeocoder(geoPlaces, {
         maplibregl,
+        marker: false,
         showResultsWhileTyping: true,
         debounceSearch: 300,
         limit: 5,
@@ -95,14 +97,36 @@ export default function WildFireMap() {
       var aqObject = {};
       geocoderControl.on("result", async ({ result }) => {
         const coord = result.geometry.coordinates;
-        console.log(coord);
         aqObject = await getcurrentLocationAQ(coord[0], coord[1]);
-        saveToJson(coord[0], coord[1]);
-        console.log(aqObject);
+        // const marker = new maplibregl.Marker({ color: "blue" })
+        //   .setLngLat([coord[0], coord[1]])
+        //   .addTo(map)
+        //   .getElement()
+        //   .addEventListener("click", () => {
+        //     // new maplibregl.Popup({ offset: 25 })
+        //     //   .setLngLat([coord[0], coord[1]])
+        //     //   .setHTML(`<strong>${result.place_name}</strong>`)
+        //     //   .addTo(map);
+        //     console.log("cacscac");
+        //   })
+
+        const markerElement = new maplibregl.Marker({ color: "blue" })
+          .setLngLat([coord[0], coord[1]])
+          .addTo(map)
+          .getElement(); // Get the DOM element
+
+        markerElement.addEventListener("click", () => {
+          console.log("cacscac");
+        });
+
+        // Set cursor style to pointer
+        markerElement.style.cursor = "pointer";
+
         map.flyTo({
           center: result.geometry.coordinates,
           zoom: 14,
           speed: 1.2,
+          marker: false,
         });
       });
 
@@ -284,10 +308,7 @@ export default function WildFireMap() {
     <div className="map-page-container">
       <div className="map-wrapper">
         <div ref={mapContainer} className="map-container" />
-        <div>
-          {" "}
-          <AQIBar aqi={selectedAQI} location={selectedLocation} />
-        </div>
+        <AQIBar aqi={selectedAQI} location={selectedLocation} />
       </div>
     </div>
   );
