@@ -1,0 +1,18 @@
+{
+  "id": "msg_bdrk_01MaLrKjCHw6vcRN7UhSxX3c",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-5-haiku-20241022",
+  "content": [
+    {
+      "type": "text",
+      "text": "Here's a JSON response based on the provided information:\n\n```json\n{\n    \"impactedAQI\": 73,\n    \"description\": \"Moderate air quality with potential wildfire particulate matter influence. The nearby wildfire at 100km distance is contributing to increased pollution levels.\",\n    \"advice\": [\n        \"Limit outdoor activities, especially for sensitive groups\",\n        \"Keep windows and doors closed\",\n        \"Use air purifiers with HEPA filters if available\",\n        \"Wear N95 or KN95 masks when outside\",\n        \"Stay hydrated and monitor respiratory symptoms\",\n        \"Check local air quality updates regularly\",\n        \"Consider creating a clean indoor air space with filtered air\"\n    ]\n}\n```"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 63,
+    "output_tokens": 169
+  }
+}
