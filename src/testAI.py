@@ -94,6 +94,12 @@ def main():
     print("\n Prediction result:")
     print(json.dumps(result, indent=4))
 
+    output_filename = "prediction_result.json"
+    with open(output_filename, "w") as fp:
+        json.dump(result, fp, indent=4)
+
+    print(f"\nSaved")
+
 
 if __name__ == "__main__":
     main()
