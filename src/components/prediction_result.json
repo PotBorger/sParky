@@ -1,0 +1,10 @@
+{
+  "predictions": [
+    {
+      "predicted_label": "False",
+      "probability": 0.5275058746337891,
+      "probabilities": "[0.5275058746337891, 0.47249412536621094]",
+      "labels": "['False', 'True']"
+    }
+  ]
+}
