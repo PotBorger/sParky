@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-
+import axios from "axios";
 import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
 import "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css";
 
@@ -19,13 +19,23 @@ export default function WildFireMap() {
   const mapContainer = useRef(null);
   const { search } = useLocation();
   const initialLocation = new URLSearchParams(search).get("initialLocation");
-
+  // const [currentLat, setCurrentLat] = useState(0.0);
+  // const [currentLon, setCurrentLon] = useState(0.0);
   const [selectedAQI, setSelectedAQI] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
 
+  const saveToJson = async (lon, lat) => {
+    try {
+      await axios.post("http://localhost:5001/api/save-coord", { lon, lat });
+      console.log("✅ Coord written to server");
+    } catch (err) {
+      console.error(err);
+      console.log("❌ Failed to save on server");
+    }
+  };
+
   useEffect(() => {
     let map, geocoderControl;
-
     (async () => {
       const API_KEY =
         "v1.public.eyJqdGkiOiIyOGFlZjc2MS1hZGE3LTRkMTQtYjVhZi0zNjNhMmZkNTUwYTcifUH5Z7GPNiZfzEWRrhUXdzGS2-fqSg7W11ab6pgIo_5Xc8o_Zw6jTA_YDKgTYsynAQCj7IYtjznbn-sIO3W9QH_akkf259vubkY1aiBUAkBDubulx6cpc5oZ9TOTc8ml7qmjIFe_yGHlHld7KhyTztM6QGdNMbhYLKWR4VrTrP0NGeQ9AhBS1TyOzXWV3L613hh4Yv8lp0GnjpTRNystEAHZo8L9EIUt9f4uxZlyWObVuJFurC00WoazrO3P9o_ncw3lI5Xf8T6i2qxDRF32ZyX9CfzKaHWfNW4bq-D38SQ739pKv_00FXmwC6o_lEJtxewa0Nf6nPmWfzTMisrOvAw.ZWU0ZWIzMTktMWRhNi00Mzg0LTllMzYtNzlmMDU3MjRmYTkx";
@@ -68,11 +78,27 @@ export default function WildFireMap() {
 
       // 4) Handle initial location without any movement
       if (initialLocation) {
-        // Just query but don't move the map
         geocoderControl.query(initialLocation);
       }
 
-      geocoderControl.on("result", ({ result }) => {
+      async function getcurrentLocationAQ(longitude, latitude) {
+        try {
+          // include lat & lon as query params
+          const response = await axios.get(
+            `http://localhost:5001/api/currentAQ?lat=${latitude}&lon=${longitude}`
+          );
+          return response.data.result;
+        } catch (error) {
+          console.error("API error:", error.response?.status, error.message);
+        }
+      }
+      var aqObject = {};
+      geocoderControl.on("result", async ({ result }) => {
+        const coord = result.geometry.coordinates;
+        console.log(coord);
+        aqObject = await getcurrentLocationAQ(coord[0], coord[1]);
+        saveToJson(coord[0], coord[1]);
+        console.log(aqObject);
         map.flyTo({
           center: result.geometry.coordinates,
           zoom: 14,
@@ -88,7 +114,7 @@ export default function WildFireMap() {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [-111.876183, 40.758701],
+              coordinates: [-111.90782, 40.77042],
             },
             properties: {
               label: "Salt Lake City",
