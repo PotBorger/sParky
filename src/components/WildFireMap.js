@@ -114,188 +114,139 @@ export default function WildFireMap() {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [-111.90782, 40.77042],
+              coordinates: [-113.5049, 37.2804],
             },
             properties: {
-              label: "Salt Lake City",
+              label: "Washington County",
               color: "#FF5722",
-              aqi: 89,
-              message: "Salt Lake City - AQI: 89 (Moderate)",
+              aqi: 132,
+              message:
+                "Washington County - AQI: 132 (Unhealthy for Sensitive Groups)",
             },
           },
           {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [85.1376, 25.5941],
+              coordinates: [-113.2893, 37.8592],
             },
             properties: {
-              label: "Patna",
-              color: "#FF5722",
-              aqi: 156,
-              message: "Patna - AQI: 156 (Unhealthy)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [77.1025, 28.7041],
-            },
-            properties: {
-              label: "Delhi",
-              color: "#2196F3",
-              aqi: 234,
-              message: "Delhi - AQI: 234 (Very Unhealthy)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [77.5946, 12.9716],
-            },
-            properties: {
-              label: "Bangalore",
+              label: "Iron County",
               color: "#FF9800",
-              aqi: 67,
-              message: "Bangalore - AQI: 67 (Moderate)",
+              aqi: 88,
+              message: "Iron County - AQI: 88 (Moderate)",
             },
           },
           {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [78.4867, 17.385],
+              coordinates: [-113.0821, 41.521],
             },
             properties: {
-              label: "Hyderabad",
-              color: "#9C27B0",
-              aqi: 98,
-              message: "Hyderabad - AQI: 98 (Moderate)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [-87.6298, 41.8781],
-            },
-            properties: {
-              label: "Chicago",
-              color: "#4CAF50",
-              aqi: 43,
-              message: "Chicago - AQI: 43 (Good)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [-122.3321, 47.6062],
-            },
-            properties: {
-              label: "Seattle",
-              color: "#FFC107",
-              aqi: 72,
-              message: "Seattle - AQI: 72 (Moderate)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [4.3517, 50.8503],
-            },
-            properties: {
-              label: "Brussels",
-              color: "#3F51B5",
-              aqi: 38,
-              message: "Brussels - AQI: 38 (Good)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [2.3522, 48.8566],
-            },
-            properties: {
-              label: "Paris",
+              label: "Box Elder County",
               color: "#E91E63",
-              aqi: 54,
-              message: "Paris - AQI: 54 (Moderate)",
+              aqi: 148,
+              message:
+                "Box Elder County - AQI: 148 (Unhealthy for Sensitive Groups)",
             },
           },
           {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [-0.1276, 51.5074],
+              coordinates: [-113.1311, 40.4488],
             },
             properties: {
-              label: "London",
-              color: "#795548",
+              label: "Tooele County",
+              color: "#FFC107",
+              aqi: 74,
+              message: "Tooele County - AQI: 74 (Moderate)",
+            },
+          },
+          {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [-111.6703, 40.1199],
+            },
+            properties: {
+              label: "Utah County",
+              color: "#9C27B0",
+              aqi: 95,
+              message: "Utah County - AQI: 95 (Moderate)",
+            },
+          },
+          {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [-111.9236, 40.6674],
+            },
+            properties: {
+              label: "Salt Lake County",
+              color: "#4CAF50",
+              aqi: 53,
+              message: "Salt Lake County - AQI: 53 (Moderate)",
+            },
+          },
+          {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [-112.785, 39.7027],
+            },
+            properties: {
+              label: "Juab County",
+              color: "#03A9F4",
               aqi: 61,
-              message: "London - AQI: 61 (Moderate)",
+              message: "Juab County - AQI: 61 (Moderate)",
             },
           },
           {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [28.0473, -26.2041],
+              coordinates: [-111.5763, 39.374],
             },
             properties: {
-              label: "Johannesburg",
-              color: "#673AB7",
-              aqi: 87,
-              message: "Johannesburg - AQI: 87 (Moderate)",
+              label: "Sanpete County",
+              color: "#8BC34A",
+              aqi: 49,
+              message: "Sanpete County - AQI: 49 (Good)",
             },
           },
           {
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [-123.1216, 49.2827],
+              coordinates: [-111.433, 37.833],
             },
             properties: {
-              label: "Vancouver",
+              label: "Garfield County",
+              color: "#795548",
+              aqi: 58,
+              message: "Garfield County - AQI: 58 (Moderate)",
+            },
+          },
+          {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [-109.615, 38.9915],
+            },
+            properties: {
+              label: "Grand County",
               color: "#FF5722",
-              aqi: 134,
-              message: "Vancouver - AQI: 134 (Unhealthy for Sensitive Groups)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [-104.9903, 39.7392],
-            },
-            properties: {
-              label: "Denver",
-              color: "#FF9800",
-              aqi: 78,
-              message: "Denver - AQI: 78 (Moderate)",
-            },
-          },
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [-97.7431, 30.2672],
-            },
-            properties: {
-              label: "Austin",
-              color: "#3F51B5",
-              aqi: 45,
-              message: "Austin - AQI: 45 (Good)",
+              aqi: 112,
+              message:
+                "Grand County - AQI: 112 (Unhealthy for Sensitive Groups)",
             },
           },
         ],
       };
 
-      // 6) Log any geocoder errors
+      // Log any geocoder errors
       geocoderControl.on("error", (err) =>
         console.error("Geocoder error:", err)
       );
