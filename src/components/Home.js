@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./FireForesight.css";
-import TechBadge from "./TechBadge";
-import FireParticles from "./FireParticles";
+import TechBadge from "./TechBadge.js";
+import FireParticles from "./FireParticles.js";
+import SecondaryButton from "./SecondaryButton.js";
+import axios from "axios";
 
 /** Button with flame arrow */
 const FlameButton = ({ text, disabled }) => (
@@ -95,12 +97,32 @@ export default function Home() {
 
           <div className="buttons-container">
             <Link
-              to={`/map?initialLocation=${encodeURIComponent(
-                initialLocation
-              )}`}
+              to={`/map?initialLocation=${encodeURIComponent(initialLocation)}`}
             >
               <FlameButton text="Get Started" disabled={!initialLocation} />
             </Link>
+          </div>
+          <div>
+            <SecondaryButton
+              text="Check AQ"
+              onClick={() => {
+                const fetchAQ = async () => {
+                  try {
+                    const response = await axios.get(
+                      "http://localhost:5001/api/currentAQ"
+                    );
+                    console.log(response);
+                  } catch (error) {
+                    console.error(
+                      "API error:",
+                      error.response?.status,
+                      error.message
+                    );
+                  }
+                };
+                fetchAQ();
+              }}
+            />
           </div>
         </div>
       </section>

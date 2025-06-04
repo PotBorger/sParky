@@ -1,3 +1,7 @@
-export default function SecondaryButton({ text }) {
-  return <button className="secondary-button">{text}</button>;
+export default function SecondaryButton({ text, onClick }) {
+  return (
+    <button className="secondary-button" onClick={onClick}>
+      {text}
+    </button>
+  );
 }
