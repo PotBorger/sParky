@@ -1,5 +1,7 @@
 
 import axios from "axios";
+// import { generateWildfireImpact } from "../genAI.js";
+import { runPredictWildFire } from "/Users/dustin/Desktop/sParky/src/components/testAI.js";
 
 const API_KEY = "df23feb6c17d01620d3577d05641b174";
 
@@ -79,5 +81,14 @@ try{
   }
 };
 
+const runPredict = async(req,res) => {
+  try{
+    const prediction  = await runPredictWildFire();
+    return res.json({data: prediction.data})
+  } catch(err) {
+      console.err("Loi Roi!!", err);
+      return res.status(500).json({error: err.message});
+  }
+}
 
-export {getCurrentAQ,getCurrentDataClimate}
+export {getCurrentAQ,getCurrentDataClimate, runPredict}

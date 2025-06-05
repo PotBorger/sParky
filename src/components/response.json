@@ -1,0 +1,11 @@
+{
+  "impactedAQI": 4,
+  "description": "Significant air quality degradation from nearby wildfire smoke",
+  "advice": [
+    "Stay indoors with windows and doors closed",
+    "Use HEPA air purifiers if available",
+    "Wear N95 or KN95 mask if you must go outside",
+    "Avoid strenuous outdoor activities",
+    "Monitor local air quality updates"
+  ]
+}

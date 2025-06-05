@@ -2,6 +2,7 @@ import express from "express";
 import {
   getCurrentAQ,
   getCurrentDataClimate,
+  runPredict,
 } from "../controllers/apiController.js";
 import { writeFile } from "fs/promises";
 const router = express.Router();
@@ -22,4 +23,6 @@ router.post("/save-coord", async (req, res) => {
     return res.status(500).json({ error: "Failed to write file" });
   }
 });
+
+router.get("/run-predict", runPredict);
 export default router;
