@@ -25,6 +25,7 @@ export default function WildFireMap() {
   const [wildfireProbability, setWildfireProbability] = useState(0);
   const [impactedAQI, setImpactedAQI] = useState(null);
   const [safetyAdvice, setSafetyAdvice] = useState([]);
+  const [healthDescription, setHealthDescription] = useState("");
 
   async function saveToJson(lon, lat) {
     try {
@@ -48,9 +49,8 @@ export default function WildFireMap() {
         { currentLon, currentLat, distanceToFire }
       );
       console.log(response.data.data);
-      const impactAQI = response.data.data.impactedAQI;
-      console.log(impactAQI);
-      return impactAQI;
+      // const impactAQI = response.data.data.impactedAQI;
+      return response.data.data;
     } catch (err) {
       console.error(err);
       console.log("Failed Loi cac impact");
@@ -440,8 +440,10 @@ export default function WildFireMap() {
         el.addEventListener("click", async () => {
           const coord = marker.geometry.coordinates; // [lon, lat]
           const probArrayString = await predictFireAtLocation(coord[0], coord[1]);
-          const calculaingImpactOfAQI =  await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
-          const impactOfAQI =  parseInt(calculaingImpactOfAQI);
+          const impactObject =  await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
+          const impactOfAQI =  parseInt(impactObject.impactedAQI);
+          const impactAdvice = impactObject.advice;
+          const impactDescription = impactObject.description;
           // Calculate wildfire data based on the selected AQI
          console.log("11"+probArrayString);
           const wildfireData = calculateWildfireData(marker.properties.aqi);
@@ -455,7 +457,8 @@ export default function WildFireMap() {
           setWildfireProbability(Math.round(fireProb*100));
           // setImpactedAQI(wildfireData.impactedAQI);
           setImpactedAQI(impactOfAQI);
-          setSafetyAdvice(wildfireData.advice);
+          setHealthDescription(impactDescription);
+          setSafetyAdvice(impactAdvice);
         });
 
         new maplibregl.Marker({
@@ -480,6 +483,7 @@ export default function WildFireMap() {
           impactedAQI={impactedAQI}
           location={selectedLocation}
           advice={safetyAdvice}
+          healthDescription = {healthDescription}
         />
       </div>
     </div>

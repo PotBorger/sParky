@@ -9,13 +9,13 @@ const segments = [
     description: "Air quality is satisfactory",
   },
   {
-    label: "Moderate",
+    label: "Fair",
     color: "#FFD93D",
     range: 2,
     description: "Acceptable for most people",
   },
   {
-    label: "Unhealthy SG",
+    label: "Moderate",
     color: "#FF9F1C",
     range: 3,
     description: "Sensitive groups may experience symptoms",
@@ -51,6 +51,7 @@ export default function AQIBar({
   impactedAQI, // how fire might affect AQI
   location, // location name
   advice = [], // array of advice strings
+  healthDescription = "",
 }) {
   const fillRef = useRef();
   const pointerRef = useRef();
@@ -156,7 +157,16 @@ export default function AQIBar({
 
       <div className="aqi-header">
         <div className="aqi-main-label">
-          <span className="aqi-value">Current AQI ({currentAQI}) ➠ Impacted AQI ({impactedAQI}) </span>
+          {impactedAQI != null ? (
+              <span className="aqi-value">
+            Current AQI ({currentAQI}) ➠ Impacted AQI ({impactedAQI})
+          </span>
+        ) : (
+          <span className="aqi-value">
+            Current AQI ({currentAQI})
+          </span>
+)}
+          {/* <span className="aqi-value">Current AQI ({currentAQI}) ➠ Impacted AQI ({impactedAQI}) </span> */}
           <span className="aqi-level" style={{ color }}>
             {label}
           </span>
@@ -202,12 +212,15 @@ export default function AQIBar({
         </div>
       </div>
 
-      <div className="aqi-recommendation">
-        <div className="aqi-advice">
-          <strong>Health Advisory:</strong> {description}. Consider limiting
-          outdoor activities if you're sensitive to air pollution.
-        </div>
-      </div>
+     <div className="aqi-recommendation">
+  {healthDescription !== "" && (
+    <div className="aqi-advice">
+      <strong>Impact To Current Air Quality If Wildfire Occurs:</strong>{" "}
+      {healthDescription}
+    </div>
+  )}
+</div>
+
 
       <div className="aqi-expand-section">
         <h3>Wildfire Impact Details</h3>
