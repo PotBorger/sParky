@@ -235,37 +235,6 @@ export default function WildFireMap() {
           .setLngLat([coord[0], coord[1]])
           .addTo(map);
 
-        // 3) Grab its DOM element (no more `markerElement`)
-        const el = currentMarker.getElement();
-        el.style.cursor = "pointer";
-
-        // 4) Attach a click listener to open a Popup
-        el.addEventListener("click", () => {
-          new maplibregl.Popup({
-            offset: 25,
-            maxWidth: "400px",
-            closeButton: true,
-            closeOnClick: false,
-          })
-            .setLngLat([coord[0], coord[1]])
-            .setHTML(
-              `
-        <div style="max-width: 350px; padding: 15px;">
-          <h3 style="margin: 0 0 15px 0; color: #333; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-            Current Air Quality Data
-          </h3>
-          <div style="color: #555; font-size: 14px;">
-            <strong>Current Location:</strong> ${result.place_name}<br/>
-            <div style="margin-top: 10px;">
-              ${formatAQData(userAQ)}
-            </div>
-          </div>
-        </div>
-      `
-            )
-            .addTo(map);
-        });
-
         // Fly the map to the new location
         map.flyTo({
           center: [coord[0], coord[1]],
