@@ -378,8 +378,6 @@ export default function WildFireMap() {
   const mapContainer = useRef(null);
   const { search } = useLocation();
   const initialLocation = new URLSearchParams(search).get("initialLocation");
-  // const [currentLat, setCurrentLat] = useState(0.0);
-  // const [currentLon, setCurrentLon] = useState(0.0);
   const [selectedAQI, setSelectedAQI] = useState(null);
   const [userAQ, setUserAQ] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("");
@@ -387,7 +385,7 @@ export default function WildFireMap() {
   const [impactedAQI, setImpactedAQI] = useState(null);
   const [safetyAdvice, setSafetyAdvice] = useState([]);
 
-  const saveToJson = async (lon, lat) => {
+  async function saveToJson(lon, lat) {
     try {
       await axios.post("http://localhost:5001/api/save-coord", { lon, lat });
       console.log("Coord written to server");
@@ -395,7 +393,7 @@ export default function WildFireMap() {
       console.error(err);
       console.log("Failed to save on server");
     }
-  };
+  }
 
   // Helper function to format AQ data for display
   const formatAQData = (aqData) => {
@@ -530,6 +528,7 @@ export default function WildFireMap() {
       geocoderControl.on("result", async ({ result }) => {
         const coord = result.geometry.coordinates;
         setUserAQ(await getcurrentLocationAQ(coord[0], coord[1]));
+        saveToJson(coord[0], coord[1]);
         // 1) Remove any existing marker
         if (currentMarker) {
           currentMarker.remove();
@@ -719,7 +718,6 @@ export default function WildFireMap() {
             properties: {
               label: "Grand County",
               color: "#FF5722",
-              // original 112 → 101–150 → index 3 (Moderate)
               aqi: 3,
               message: "Grand County – AQI: 3 (Moderate)",
             },
@@ -731,9 +729,9 @@ export default function WildFireMap() {
       geocoderControl.on("error", (err) =>
         console.error("Geocoder error:", err)
       );
-
+      // Create FLAME MARKER
       geojson.features.forEach((marker) => {
-        // create a DOM element for the marker
+        // Create a DOM element for the marker
         const el = document.createElement("div");
         el.className = "marker";
         el.style.backgroundImage = `url(https://scontent-den2-1.xx.fbcdn.net/v/t1.15752-9/491182927_1031472402451810_2677738583898578422_n.png?stp=dst-png_s480x480&_nc_cat=106&ccb=1-7&_nc_sid=0024fc&_nc_ohc=o80woKmGPl8Q7kNvwHV-Eiy&_nc_oc=AdkRk7LFzrjCP3MB0FUay-l5H66WvMtqNe4TVG7SVJIjtODjqrfqsMUYaKPjtzO8-Hs&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-den2-1.xx&oh=03_Q7cD2QFxHr_laz7jTuaTNHrn-aCB1PjJ0Nk4ycS1NgiY0OWOgg&oe=685618F1)`;
@@ -745,8 +743,9 @@ export default function WildFireMap() {
 
         el.addEventListener("click", () => {
           // Calculate wildfire data based on the selected AQI
-          const wildfireData = calculateWildfireData(marker.properties.aqi);
-
+          const wildfireData = calculateWildfireData(
+            flameMarker.properties.aqi
+          );
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
           setSelectedLocation(marker.properties.label);
@@ -769,17 +768,15 @@ export default function WildFireMap() {
 
   return (
     <div className="map-page-container">
-      <div className="map-wrapper">
+      <div className="map-bar-wrapper">
         <div ref={mapContainer} className="map-container" />
-        <div className="bar-wrapper">
-          <AQIBar
-            probability={wildfireProbability}
-            currentAQI={selectedAQI}
-            impactedAQI={impactedAQI}
-            location={selectedLocation}
-            advice={safetyAdvice}
-          />
-        </div>
+        <AQIBar
+          probability={wildfireProbability}
+          currentAQI={selectedAQI}
+          impactedAQI={impactedAQI}
+          location={selectedLocation}
+          advice={safetyAdvice}
+        />
       </div>
     </div>
   );
