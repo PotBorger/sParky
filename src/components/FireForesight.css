@@ -15,7 +15,8 @@ body {
   min-height: 100vh;
   padding: 24px;
   /* Pure background image—no inline gradient here */
-  background: url("/public/assets/images/chay-rung-fr.png") center center/cover no-repeat;
+  background: url("/public/assets/images/chay-rung-fr.png") center center/cover
+    no-repeat;
   color: white;
   z-index: 0;
 }
@@ -59,9 +60,17 @@ body {
 }
 
 @keyframes emberRise {
-  0%   { transform: translateY(0);     opacity: 1;   }
-  70%  { opacity: 0.5;                 }
-  100% { transform: translateY(-120vh); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
 }
 
 /* === Main Section (Your translucent card) === */
@@ -175,19 +184,18 @@ body {
   font-weight: 500;
   color: white;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
   border: none;
   cursor: pointer;
 }
 .flame-button:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 .flame-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.5),
-              0 0 0 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.5), 0 0 0 4px rgba(0, 0, 0, 0.3);
 }
 .button-content {
   position: relative;
@@ -242,28 +250,31 @@ body {
 
 /* === Map Page Styles === */
 .map-page-container {
+  display: grid;
+  grid-template-rows: 0.8fr 0.2fr;
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 2rem 0;
-  background: url("/public/assets/images/chay-rung-fr.png") center center/cover no-repeat;
+  background: url("/public/assets/images/chay-rung-fr.png") center center/cover
+    no-repeat;
   color: white;
   z-index: 0;
+  height: 100%;
 }
-
-.map-wrapper {
-  width: 80%;
-  margin: 0 auto;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
 .map-container {
   width: 100%;
-  height: 60vh;
+  height: 80%;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
-
+.map-bar-wrapper {
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 15px;
+  overflow: visible;
+  height: 100%;
+}
 
 /* ensure badge lays out dot + text inline */
 .tech-badge {
@@ -338,9 +349,9 @@ body {
   max-width: 400px;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
@@ -361,7 +372,3 @@ body {
   opacity: 0.5;
   cursor: default;
 }
-
-
-
-
