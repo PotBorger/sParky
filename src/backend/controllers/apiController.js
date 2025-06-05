@@ -1,8 +1,6 @@
-
 import axios from "axios";
 // import { generateWildfireImpact } from "../genAI.js";
-import { runPredictWildFire } from "/Users/dustin/Desktop/sParky/src/components/testAI.js";
-
+import { runPredictWildFire } from "../testAI";
 const API_KEY = "df23feb6c17d01620d3577d05641b174";
 
 const getCurrentAQ = async (req, res) => {
@@ -35,60 +33,57 @@ const getCurrentAQ = async (req, res) => {
   }
 };
 
-
 const API_KEY_DATACLIMATE = "2ae8a8e91d77d8a2ff145347701a01cb";
-const getCurrentDataClimate = async (req, res)=>{
-try{
-  const latitude = req.query.lat;
-  const longitude = req.query.lon;
+const getCurrentDataClimate = async (req, res) => {
+  try {
+    const latitude = req.query.lat;
+    const longitude = req.query.lon;
 
+    if (!latitude || !longitude) {
+      return res.status(400).json({ error: "lat and lon are required" });
+    }
 
-  if (!latitude || !longitude) {
-    return res.status(400).json({ error: "lat and lon are required" });
-  }
+    const today = new Date().toISOString().split("T")[0];
 
-  const today = new Date().toISOString().split("T")[0];
+    // const url = `https://api.openweathermap.org/data/3.0/onecall/day_summary?lat=${latitude}&lon=${longtitude}&date=${today}&appid=${API_KEY_}`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY_DATACLIMATE}`;
 
-  // const url = `https://api.openweathermap.org/data/3.0/onecall/day_summary?lat=${latitude}&lon=${longtitude}&date=${today}&appid=${API_KEY_}`;
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY_DATACLIMATE}`;
+    const response = await axios.get(url);
 
-  const response = await axios.get(url);
-  
-  const data = response.data;
+    const data = response.data;
 
-  const resultJson = {
-    // currentDate: data.date,
-    // currentMinTemp: data.temperature.min,
-    // currentMaxTemp: data.temperature.max,
-    // curentWindSpeed: data.wind.max.speed,
-    // currentPrecipitation: data.precipitation.total
-    currentMinTemp: data.main.temp_min,
-    currentMaxTemp: data.main.temp_max,
-    currentWindSpeed: data.wind.speed,
-    currentPrecipitation: data.main.humidity
-    // currentPrecipitation: data.rain?.["1h"]
-  };
+    const resultJson = {
+      // currentDate: data.date,
+      // currentMinTemp: data.temperature.min,
+      // currentMaxTemp: data.temperature.max,
+      // curentWindSpeed: data.wind.max.speed,
+      // currentPrecipitation: data.precipitation.total
+      currentMinTemp: data.main.temp_min,
+      currentMaxTemp: data.main.temp_max,
+      currentWindSpeed: data.wind.speed,
+      currentPrecipitation: data.main.humidity,
+      // currentPrecipitation: data.rain?.["1h"]
+    };
 
-  return res.json({result: resultJson});
+    return res.json({ result: resultJson });
+  } catch (error) {
+    console.error("Loi ROI!!", error.message);
 
-}catch(error){
-  console.error("Loi ROI!!", error.message);
-
-  return res.status(502).json({
-      error:   "Failed to fetch data from OpenWeather day_summary endpoint",
+    return res.status(502).json({
+      error: "Failed to fetch data from OpenWeather day_summary endpoint",
       details: error.message,
     });
   }
 };
 
-const runPredict = async(req,res) => {
-  try{
-    const prediction  = await runPredictWildFire();
-    return res.json({data: prediction.data})
-  } catch(err) {
-      console.err("Loi Roi!!", err);
-      return res.status(500).json({error: err.message});
+const runPredict = async (req, res) => {
+  try {
+    const prediction = await runPredictWildFire();
+    return res.json({ data: prediction.data });
+  } catch (err) {
+    console.err("Loi Roi!!", err);
+    return res.status(500).json({ error: err.message });
   }
-}
+};
 
-export {getCurrentAQ,getCurrentDataClimate, runPredict}
+export { getCurrentAQ, getCurrentDataClimate, runPredict };

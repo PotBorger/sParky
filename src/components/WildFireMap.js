@@ -729,6 +729,7 @@ export default function WildFireMap() {
       geocoderControl.on("error", (err) =>
         console.error("Geocoder error:", err)
       );
+
       // Create FLAME MARKER
       geojson.features.forEach((marker) => {
         // Create a DOM element for the marker
@@ -743,9 +744,7 @@ export default function WildFireMap() {
 
         el.addEventListener("click", () => {
           // Calculate wildfire data based on the selected AQI
-          const wildfireData = calculateWildfireData(
-            flameMarker.properties.aqi
-          );
+          const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
           setSelectedLocation(marker.properties.label);
