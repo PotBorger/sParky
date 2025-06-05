@@ -301,7 +301,7 @@ export default function AQIBar({
       style={{ border: `1px solid ${color}` }}
     >
       <div className="aqi-location">
-        {location || "Click a marker to see AQI"}
+        {location || "Your current location"}
       </div>
 
       <div className="fire-particles">

@@ -197,3 +197,4 @@ export default async function runPredictWildFire(fireLon, fireLat) {
 
   return prediction;
 }
+

@@ -62,6 +62,12 @@ export default function WildFireMap() {
         { fireLon, fireLat }
       );
       console.log(response.data.data);
+
+      const probArray = response.data.data.predictions[0].probabilities;
+      console.log(probArray);
+      return probArray;
+
+      console.log(probArray);
     } catch (err) {
       console.error(err);
       console.log("Failed Loi cac");
@@ -198,7 +204,7 @@ export default function WildFireMap() {
       let currentMarker = null; // Keep track of the current blue marker
 
       geocoderControl.on("result", async ({ result }) => {
-        const coord = result.geometry.coordinates;
+        const coord = result.geometry.coordinates;// lom,lat
         setCurrentLonLat([coord[0], coord[1]]);
         setUserAQ(await getcurrentLocationAQ(coord[0], coord[1]));
         saveToJson(coord[0], coord[1]);
@@ -428,17 +434,21 @@ export default function WildFireMap() {
 }
 
 
-        el.addEventListener("click", () => {
+        el.addEventListener("click", async () => {
           const coord = marker.geometry.coordinates; // [lon, lat]
-          predictFireAtLocation(coord[0], coord[1]);
-          generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
+          const probArrayString = await predictFireAtLocation(coord[0], coord[1]);
+          await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
           // Calculate wildfire data based on the selected AQI
-         
+         console.log("11"+probArrayString);
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
           setSelectedLocation(marker.properties.label);
-          setWildfireProbability(wildfireData.probability);
+          // setWildfireProbability(wildfireData.probability);
+          const parts = probArrayString.replace(/[\[\]\s]/g, "").split(",");
+          const fireProb = parseFloat(parts[1]);
+          // const parsed
+          setWildfireProbability(Math.round(fireProb*100));
           setImpactedAQI(wildfireData.impactedAQI);
           setSafetyAdvice(wildfireData.advice);
         });
@@ -461,7 +471,7 @@ export default function WildFireMap() {
         <div ref={mapContainer} className="map-container" />
         <AQIBar
           probability={wildfireProbability}
-          currentAQI={selectedAQI}
+          currentAQI={userAQ.currentAQI}
           impactedAQI={impactedAQI}
           location={selectedLocation}
           advice={safetyAdvice}
