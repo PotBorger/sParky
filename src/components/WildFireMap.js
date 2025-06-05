@@ -48,6 +48,9 @@ export default function WildFireMap() {
         { currentLon, currentLat, distanceToFire }
       );
       console.log(response.data.data);
+      const impactAQI = response.data.data.impactedAQI;
+      console.log(impactAQI);
+      return impactAQI;
     } catch (err) {
       console.error(err);
       console.log("Failed Loi cac impact");
@@ -437,7 +440,8 @@ export default function WildFireMap() {
         el.addEventListener("click", async () => {
           const coord = marker.geometry.coordinates; // [lon, lat]
           const probArrayString = await predictFireAtLocation(coord[0], coord[1]);
-          await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
+          const calculaingImpactOfAQI =  await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
+          const impactOfAQI =  parseInt(calculaingImpactOfAQI);
           // Calculate wildfire data based on the selected AQI
          console.log("11"+probArrayString);
           const wildfireData = calculateWildfireData(marker.properties.aqi);
@@ -449,7 +453,8 @@ export default function WildFireMap() {
           const fireProb = parseFloat(parts[1]);
           // const parsed
           setWildfireProbability(Math.round(fireProb*100));
-          setImpactedAQI(wildfireData.impactedAQI);
+          // setImpactedAQI(wildfireData.impactedAQI);
+          setImpactedAQI(impactOfAQI);
           setSafetyAdvice(wildfireData.advice);
         });
 
