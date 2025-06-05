@@ -414,12 +414,26 @@ export default function WildFireMap() {
         el.style.width = `30px`;
         el.style.height = `30px`;
         el.style.cursor = "pointer";
+         function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c; // Distance in kilometers
+    return Math.round(distance);
+}
+
 
         el.addEventListener("click", () => {
           const coord = marker.geometry.coordinates; // [lon, lat]
           predictFireAtLocation(coord[0], coord[1]);
-          generateImpactAtLocation(currentLonLat[0], currentLonLat[1], 100); // DEFAULT đang 100KM, bỏ distance real dô
+          generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
           // Calculate wildfire data based on the selected AQI
+         
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
