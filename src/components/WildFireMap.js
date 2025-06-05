@@ -28,7 +28,6 @@ export default function WildFireMap() {
   const [healthDescription, setHealthDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   async function saveToJson(lon, lat) {
     try {
       await axios.post("http://localhost:5001/api/save-coord", { lon, lat });
@@ -529,7 +528,12 @@ export default function WildFireMap() {
           setHealthDescription(impactDescription);
           setSafetyAdvice(impactAdvice);
           setLoading(false);
-
+          map.flyTo({
+            center: [coord[0], coord[1]],
+            zoom: 18,
+            speed: 1.2,
+            marker: false,
+          });
         });
 
         new maplibregl.Marker({
@@ -548,7 +552,7 @@ export default function WildFireMap() {
     <div className="map-page-container">
       <div className="map-bar-wrapper">
         <div ref={mapContainer} className="map-container" />
-         {/* ← LOADING OVERLAY (conditionally rendered) */}
+        {/* ← LOADING OVERLAY (conditionally rendered) */}
         {loading && (
           <div className="loading-overlay">
             <div className="spinner" />
