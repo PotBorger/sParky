@@ -159,9 +159,9 @@ async function streamToString(stream) {
 }
 
 // ─── 7) Main execution ───────────────────────────────────────────────────────
-export default async function runPredictWildFire() {
-  // Load coords from src/components/currentCoord.json
-  const { latitude, longitude } = readCoords();
+export default async function runPredictWildFire(fireLon, fireLat) {
+  const latitude = fireLat;
+  const longitude = fireLon;
 
   // Fetch features
   const { minTemp, maxTemp, precipitation, avgWindSpeed } =
@@ -175,16 +175,13 @@ export default async function runPredictWildFire() {
     avgWindSpeed
   );
 
-  // Print & save the prediction
-  console.log("\nPrediction result:");
-  console.log(JSON.stringify(prediction, null, 2));
-
-  const outputFilename = path.resolve(scriptDir, "prediction_result.json");
-  try {
-    fs.writeFileSync(outputFilename, JSON.stringify(prediction, null, 2));
-    console.log(`\nSaved prediction to '${outputFilename}'`);
-  } catch (writeErr) {
-    console.error("Failed to write prediction result to file:", writeErr);
-    process.exit(1);
-  }
+  return prediction;
+  // const outputFilename = path.resolve(scriptDir, "prediction_result.json");
+  // try {
+  //   fs.writeFileSync(outputFilename, JSON.stringify(prediction, null, 2));
+  //   console.log(`\nSaved prediction to '${outputFilename}'`);
+  // } catch (writeErr) {
+  //   console.error("Failed to write prediction result to file:", writeErr);
+  //   process.exit(1);
+  // }
 }

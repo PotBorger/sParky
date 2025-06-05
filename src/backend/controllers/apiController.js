@@ -1,6 +1,7 @@
 import axios from "axios";
 import runPredictWildFire from "../testAI.js";
 const API_KEY = "df23feb6c17d01620d3577d05641b174";
+import { writeFile } from "fs/promises";
 
 const getCurrentAQ = async (req, res) => {
   try {
@@ -77,12 +78,34 @@ const getCurrentDataClimate = async (req, res) => {
 
 const runPredict = async (req, res) => {
   try {
-    const prediction = await runPredictWildFire();
-    return res.json({ data: prediction.data });
+    const { fireLon, fireLat } = req.body;
+    const prediction = await runPredictWildFire(fireLon, fireLat);
+    console.log("from api" + prediction);
+    return res.json({ data: prediction });
   } catch (err) {
-    console.err("Loi Roi!!", err);
     return res.status(500).json({ error: err.message });
+  }
+  // ──> you must add this closing brace:
+};
+
+const saveCurrentCoordToJson = async (req, res) => {
+  try {
+    const { lon, lat } = req.body;
+    const currentCoordObject = { currentLon: lon, currentLat: lat };
+    const jsonString = JSON.stringify(currentCoordObject, null, 2);
+
+    // write to a .json file (you can choose any path you like)
+    await writeFile("./currentCoord.json", jsonString, "utf8");
+    return res.json({ success: true });
+  } catch (err) {
+    console.error("Error writing file:", err);
+    return res.status(500).json({ error: "Failed to write file" });
   }
 };
 
-export { getCurrentAQ, getCurrentDataClimate, runPredict };
+export {
+  saveCurrentCoordToJson,
+  getCurrentAQ,
+  getCurrentDataClimate,
+  runPredict,
+};

@@ -395,6 +395,20 @@ export default function WildFireMap() {
     }
   }
 
+  async function predictFireAtLocation(fireLon, fireLat) {
+    try {
+      console.log("cac" + [fireLon, fireLat]);
+
+      const response = await axios.post(
+        "http://localhost:5001/api/run-predict",
+        { fireLon, fireLat }
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+      console.log("Failed Loi cac");
+    }
+  }
   // Helper function to format AQ data for display
   const formatAQData = (aqData) => {
     if (!aqData) return "No air quality data available";
@@ -743,6 +757,11 @@ export default function WildFireMap() {
         el.style.cursor = "pointer";
 
         el.addEventListener("click", () => {
+          console.log("lon", marker.geometry.coordinates);
+          predictFireAtLocation(
+            marker.geometry.coordinates[0],
+            marker.geometry.coordinates[1]
+          );
           // Calculate wildfire data based on the selected AQI
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
