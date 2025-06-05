@@ -498,7 +498,7 @@ export default function WildFireMap() {
             coord[0],
             coord[1]
           );
-          const impactObject =  await generateImpactAtLocation(
+          const impactObject = await generateImpactAtLocation(
             currentLonLat[0],
             currentLonLat[1],
             calculateDistance(
@@ -507,11 +507,11 @@ export default function WildFireMap() {
               coord[0],
               coord[1]
             ),
-          const impactOfAQI =  parseInt(impactObject.impactedAQI);
-          const impactAdvice = impactObject.advice;
-          const impactDescription = impactObject.description;
             fireRadiusPrediction
           );
+          const impactOfAQI = parseInt(impactObject.impactedAQI);
+          const impactAdvice = impactObject.advice;
+          const impactDescription = impactObject.description;
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
@@ -520,7 +520,7 @@ export default function WildFireMap() {
           const parts = probArrayString.replace(/[\[\]\s]/g, "").split(",");
           const fireProb = parseFloat(parts[1]);
           // const parsed
-          setWildfireProbability(Math.round(fireProb*100));
+          setWildfireProbability(Math.round(fireProb * 100));
           // setImpactedAQI(wildfireData.impactedAQI);
           setImpactedAQI(impactOfAQI);
           setHealthDescription(impactDescription);
@@ -549,7 +549,7 @@ export default function WildFireMap() {
           impactedAQI={impactedAQI}
           location={selectedLocation}
           advice={safetyAdvice}
-          healthDescription = {healthDescription}
+          healthDescription={healthDescription}
         />
       </div>
     </div>
