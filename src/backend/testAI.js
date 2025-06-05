@@ -164,19 +164,29 @@ export default async function runPredictWildFire(fireLon, fireLat) {
   const longitude = fireLon;
 
   // Fetch features
-  const { minTemp, maxTemp, precipitation, avgWindSpeed } =
+  const { minTempF, maxTempF, precipitation, avgWindKmh } =
     await fetchFromLocal(latitude, longitude);
+
+  // 2) Convert Fahrenheit → Kelvin:
+  //    K = (°F − 32) × (5/9) + 273.15
+  const minTempK = (minTempF - 32) * (5 / 9) + 273.15;
+  const maxTempK = (maxTempF - 32) * (5 / 9) + 273.15;
+
+  // 3) Convert km/h → miles/h:
+  //    1 km/h ≈ 0.621371 mph
+  const avgWindMph = avgWindKmh * 0.621371;
 
   // Invoke SageMaker
   const prediction = await invokeSageMaker(
-    minTemp,
-    maxTemp,
+    minTempK,
+    maxTempK,
     precipitation,
-    avgWindSpeed
+    avgWindMph
   );
 
-  return prediction;
-  // const outputFilename = path.resolve(scriptDir, "prediction_result.json");
+  console.log(maxTempF);
+  console.log(maxTempK);
+  //  const outputFilename = path.resolve(scriptDir, "prediction_result.json");
   // try {
   //   fs.writeFileSync(outputFilename, JSON.stringify(prediction, null, 2));
   //   console.log(`\nSaved prediction to '${outputFilename}'`);
@@ -184,4 +194,6 @@ export default async function runPredictWildFire(fireLon, fireLat) {
   //   console.error("Failed to write prediction result to file:", writeErr);
   //   process.exit(1);
   // }
+
+  return prediction;
 }
