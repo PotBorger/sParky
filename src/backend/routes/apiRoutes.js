@@ -2,6 +2,7 @@ import express from "express";
 import {
   getCurrentAQ,
   getCurrentDataClimate,
+  runImpact,
   runPredict,
   saveCurrentCoordToJson,
 } from "../controllers/apiController.js";
@@ -11,4 +12,5 @@ router.get("/currentAQ", getCurrentAQ); // cái này nghĩa là kêu .../current
 router.get("/currentDataClimate", getCurrentDataClimate);
 router.post("/save-coord", saveCurrentCoordToJson);
 router.post("/run-predict", runPredict);
+router.post("/run-impact", runImpact);
 export default router;
