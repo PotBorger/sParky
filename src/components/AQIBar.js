@@ -1,19 +1,42 @@
-
-
 import React, { useRef, useEffect, useState } from "react";
 import "./AQIBar.css";
 
 const segments = [
-  { label: "Good",      color: "#2ED572", range: 1, description: "Air quality is satisfactory" },
-  { label: "Fair",      color: "#FFD93D", range: 2, description: "Acceptable for most people" },
-  { label: "Moderate",  color: "#FF9F1C", range: 3, description: "Sensitive groups may experience symptoms" },
-  { label: "Unhealthy", color: "#FF4D6D", range: 4, description: "Everyone may experience health effects" },
-  { label: "Hazardous", color: "#6A0572", range: 5, description: "Emergency conditions affect everyone" },
+  {
+    label: "Good",
+    color: "#2ED572",
+    range: 1,
+    description: "Air quality is satisfactory",
+  },
+  {
+    label: "Fair",
+    color: "#FFD93D",
+    range: 2,
+    description: "Acceptable for most people",
+  },
+  {
+    label: "Moderate",
+    color: "#FF9F1C",
+    range: 3,
+    description: "Sensitive groups may experience symptoms",
+  },
+  {
+    label: "Unhealthy",
+    color: "#FF4D6D",
+    range: 4,
+    description: "Everyone may experience health effects",
+  },
+  {
+    label: "Hazardous",
+    color: "#6A0572",
+    range: 5,
+    description: "Emergency conditions affect everyone",
+  },
 ];
 
 // Changed to exact‐match rather than cumulative
 function getAQILevel(aqi) {
-  const match = segments.find(seg => seg.range === aqi);
+  const match = segments.find((seg) => seg.range === aqi);
   return match || segments[segments.length - 1];
 }
 
@@ -44,7 +67,7 @@ export default function AQIBar({
     const { label: currLabel, color: currColor } = getAQILevel(currentAQI);
     // You can keep whatever fraction logic you want here (for example (index+1)/segments.length)
     // But if you only ever want to show a single “snapshot” (no smooth partial fill), you could do:
-    const index = segments.findIndex(seg => seg.range === currentAQI);
+    const index = segments.findIndex((seg) => seg.range === currentAQI);
     const fraction = (index + 1) / segments.length;
 
     // reset
@@ -60,11 +83,11 @@ export default function AQIBar({
       const targetPct = fraction * 100; // e.g. 20%, 40%, 60%, 80%, or 100%
       fillRef.current.style.transition = "width 1.5s cubic-bezier(0.4,0,0.2,1)";
       fillRef.current.style.width = `${targetPct}%`;
-      pointerRef.current.style.transition = "left 1.5s cubic-bezier(0.4,0,0.2,1)";
+      pointerRef.current.style.transition =
+        "left 1.5s cubic-bezier(0.4,0,0.2,1)";
       pointerRef.current.style.left = `${targetPct}%`;
     });
   }, [currentAQI]);
-
 
   // Animate based on impactedAQI (now uses exact match as well)
   useEffect(() => {
@@ -74,8 +97,11 @@ export default function AQIBar({
     // 1) Grab the correct label/colors for this exact impactedAQI
     const { label: impactLabel, color: impactColor } = getAQILevel(impactedAQI);
     // 2) Compute fraction = (index+1) / total segments
-    const impactedIndex = segments.findIndex(seg => seg.range === impactedAQI);
-    const clampedIndex = impactedIndex < 0 ? segments.length - 1 : impactedIndex;
+    const impactedIndex = segments.findIndex(
+      (seg) => seg.range === impactedAQI
+    );
+    const clampedIndex =
+      impactedIndex < 0 ? segments.length - 1 : impactedIndex;
     const fraction = (clampedIndex + 1) / segments.length;
 
     // reset
@@ -91,30 +117,34 @@ export default function AQIBar({
       const targetPct = fraction * 100;
       fillRef.current.style.transition = "width 1.5s cubic-bezier(0.4,0,0.2,1)";
       fillRef.current.style.width = `${targetPct}%`;
-      pointerRef.current.style.transition = "left 1.5s cubic-bezier(0.4,0,0.2,1)";
+      pointerRef.current.style.transition =
+        "left 1.5s cubic-bezier(0.4,0,0.2,1)";
       pointerRef.current.style.left = `${targetPct}%`;
     });
   }, [impactedAQI]);
 
-
   if (!visible || currentAQI == null) return null;
 
   // Get the “current” bucket’s info
-  const { label: currLabel, color: currColor, description: currDesc } = getAQILevel(currentAQI);
+  const {
+    label: currLabel,
+    color: currColor,
+    description: currDesc,
+  } = getAQILevel(currentAQI);
 
   // Compute impactedAQI’s label/color for rendering text
   const impactedLevel = impactedAQI != null ? getAQILevel(impactedAQI) : null;
   const impactLabel = impactedLevel ? impactedLevel.label : "";
 
   // Probability styling (unchanged)
-  const getProbabilityColor = prob => {
+  const getProbabilityColor = (prob) => {
     if (prob >= 80) return "#6A0572";
     if (prob >= 60) return "#A22448";
     if (prob >= 40) return "#FF4D6D";
     if (prob >= 20) return "#FF9F1C";
     return "#FFD93D";
   };
-  const getProbabilityLabel = prob => {
+  const getProbabilityLabel = (prob) => {
     if (prob >= 80) return "Very High";
     if (prob >= 60) return "High";
     if (prob >= 40) return "Moderate";
@@ -129,9 +159,7 @@ export default function AQIBar({
       className={`aqi-bar-container${expanded ? " expanded" : ""}`}
       style={{ border: `1px solid ${currColor}` }}
     >
-      <div className="aqi-location">
-        {location || "Your current location"}
-      </div>
+      <div className="aqi-location">{location || "Your current location"}</div>
 
       <div className="fire-particles">
         {[...Array(12)].map((_, i) => (
@@ -146,9 +174,7 @@ export default function AQIBar({
               Current AQI ({currentAQI}) ➠ Impacted AQI ({impactedAQI})
             </span>
           ) : (
-            <span className="aqi-value">
-              Current AQI ({currentAQI})
-            </span>
+            <span className="aqi-value">Current AQI ({currentAQI})</span>
           )}
 
           {/* Show “currLabel ➠ impactLabel” */}
@@ -179,23 +205,22 @@ export default function AQIBar({
         <div className="aqi-controls">
           <button
             className="aqi-expand-btn"
-            onClick={() => setExpanded(e => !e)}
+            onClick={() => setExpanded((e) => !e)}
           >
             {expanded ? "Minimize" : "Expand"}
-          </button>
-          <button className="aqi-close-btn" onClick={() => setVisible(false)}>
-            Close
           </button>
         </div>
       </div>
 
       <div className="aqi-chart-section">
         <div className="aqi-bar-segments">
-          {segments.map(seg => (
+          {segments.map((seg) => (
             <div
               key={seg.label}
               className="aqi-segment"
-              style={{ flex: seg.range / 15 /* total range sum no longer used */ }}
+              style={{
+                flex: seg.range / 15 /* total range sum no longer used */,
+              }}
             />
           ))}
           <div ref={fillRef} className="aqi-progress-fill" />
