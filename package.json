@@ -10,6 +10,7 @@
     "@aws/amazon-location-client": "^1.2.0",
     "@aws/amazon-location-utilities-auth-helper": "^1.2.2",
     "@maplibre/maplibre-gl-geocoder": "^1.8.0",
+    "@turf/turf": "^7.2.0",
     "axios": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

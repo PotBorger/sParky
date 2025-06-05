@@ -4,6 +4,7 @@ import {
   getCurrentDataClimate,
   runImpact,
   runPredict,
+  runRadius,
   saveCurrentCoordToJson,
 } from "../controllers/apiController.js";
 const router = express.Router();
@@ -13,4 +14,5 @@ router.get("/currentDataClimate", getCurrentDataClimate);
 router.post("/save-coord", saveCurrentCoordToJson);
 router.post("/run-predict", runPredict);
 router.post("/run-impact", runImpact);
+router.post("/run-radius", runRadius);
 export default router;

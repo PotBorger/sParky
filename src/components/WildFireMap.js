@@ -4,6 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import axios from "axios";
 import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
 import "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css";
+import * as turf from "@turf/turf";
 
 import { withAPIKey } from "@aws/amazon-location-utilities-auth-helper";
 import { GeoPlacesClient } from "@aws-sdk/client-geo-places";
@@ -39,13 +40,14 @@ export default function WildFireMap() {
   async function generateImpactAtLocation(
     currentLon,
     currentLat,
-    distanceToFire
+    distanceToFire,
+    fireRadius
   ) {
     try {
       console.log("cac to" + currentLonLat);
       const response = await axios.post(
         "http://localhost:5001/api/run-impact",
-        { currentLon, currentLat, distanceToFire }
+        { currentLon, currentLat, distanceToFire, fireRadius }
       );
       console.log(response.data.data);
     } catch (err) {
@@ -53,10 +55,9 @@ export default function WildFireMap() {
       console.log("Failed Loi cac impact");
     }
   }
+
   async function predictFireAtLocation(fireLon, fireLat) {
     try {
-      console.log("cac" + [fireLon, fireLat]);
-
       const response = await axios.post(
         "http://localhost:5001/api/run-predict",
         { fireLon, fireLat }
@@ -73,6 +74,19 @@ export default function WildFireMap() {
       console.log("Failed Loi cac");
     }
   }
+  async function predictFireRadiusAtLocation(fireLon, fireLat) {
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/api/run-radius",
+        { fireLon, fireLat }
+      );
+      return response.data.data.predictions[0].score;
+    } catch (err) {
+      console.error(err);
+      console.log("Failed Loi cac");
+    }
+  }
+
   // Helper function to format AQ data for display
   const formatAQData = (aqData) => {
     if (!aqData) return "No air quality data available";
@@ -204,7 +218,7 @@ export default function WildFireMap() {
       let currentMarker = null; // Keep track of the current blue marker
 
       geocoderControl.on("result", async ({ result }) => {
-        const coord = result.geometry.coordinates;// lom,lat
+        const coord = result.geometry.coordinates; // lom,lat
         setCurrentLonLat([coord[0], coord[1]]);
         setUserAQ(await getcurrentLocationAQ(coord[0], coord[1]));
         saveToJson(coord[0], coord[1]);
@@ -420,26 +434,78 @@ export default function WildFireMap() {
         el.style.width = `30px`;
         el.style.height = `30px`;
         el.style.cursor = "pointer";
-         function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c; // Distance in kilometers
-    return Math.round(distance);
-}
-
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+          const R = 6371; // Radius of the Earth in kilometers
+          const dLat = ((lat2 - lat1) * Math.PI) / 180;
+          const dLon = ((lon2 - lon1) * Math.PI) / 180;
+          const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((lat1 * Math.PI) / 180) *
+              Math.cos((lat2 * Math.PI) / 180) *
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          const distance = R * c; // Distance in kilometers
+          return Math.round(distance);
+        }
 
         el.addEventListener("click", async () => {
           const coord = marker.geometry.coordinates; // [lon, lat]
-          const probArrayString = await predictFireAtLocation(coord[0], coord[1]);
-          await generateImpactAtLocation(currentLonLat[0], currentLonLat[1], calculateDistance(currentLonLat[0],currentLonLat[1],coord[0],coord[1])); // DEFAULT đang 100KM, bỏ distance real dô
-          // Calculate wildfire data based on the selected AQI
-         console.log("11"+probArrayString);
+          const fireRadiusPrediction = await predictFireRadiusAtLocation(
+            coord[0],
+            coord[1]
+          );
+
+          if (map.getLayer("fire-radius-circle")) {
+            map.removeLayer("fire-radius-circle");
+          }
+          if (map.getSource("fire-radius-source")) {
+            map.removeSource("fire-radius-source");
+          }
+
+          // 4) Create a Turf circle polygon around [lon, lat].
+          //    The third argument is { steps, units }.
+          //    Here I'm assuming `fireRadiusPrediction` is in kilometers.
+          const circleGeoJSON = turf.circle(
+            [coord[0], coord[1]],
+            fireRadiusPrediction / 100,
+            {
+              steps: 64, // number of points in the polygon—higher → smoother circle
+              units: "kilometers",
+            }
+          );
+
+          // 5) Add the circle as a GeoJSON source:
+          map.addSource("fire-radius-source", {
+            type: "geojson",
+            data: circleGeoJSON,
+          });
+
+          // 6) Add a fill layer that uses that source, with red fill & low opacity:
+          map.addLayer({
+            id: "fire-radius-circle",
+            type: "fill",
+            source: "fire-radius-source",
+            paint: {
+              "fill-color": "#FF0000",
+              "fill-opacity": 0.3, // tweak transparency as you like
+            },
+          });
+          const probArrayString = await predictFireAtLocation(
+            coord[0],
+            coord[1]
+          );
+          await generateImpactAtLocation(
+            currentLonLat[0],
+            currentLonLat[1],
+            calculateDistance(
+              currentLonLat[0],
+              currentLonLat[1],
+              coord[0],
+              coord[1]
+            ),
+            fireRadiusPrediction
+          );
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
           setSelectedAQI(marker.properties.aqi);
@@ -448,7 +514,7 @@ export default function WildFireMap() {
           const parts = probArrayString.replace(/[\[\]\s]/g, "").split(",");
           const fireProb = parseFloat(parts[1]);
           // const parsed
-          setWildfireProbability(Math.round(fireProb*100));
+          setWildfireProbability(Math.round(fireProb * 100));
           setImpactedAQI(wildfireData.impactedAQI);
           setSafetyAdvice(wildfireData.advice);
         });

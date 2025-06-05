@@ -88,10 +88,10 @@ async function fetchCurrentAQI(latitude, longitude) {
 // -------------------------------------------------------------------
 // 3) Build the prompt for Bedrock
 // -------------------------------------------------------------------
-function buildPrompt(aqiValue, distanceToFire) {
+function buildPrompt(aqiValue, distanceToFire, fireRadius) {
   return (
-    `My current AQI is ${aqiValue} and there is a wildfire ${distanceToFire} km away from me. ` +
-    "Please return only a JSON object (no extra text) with exactly these keys:\n" +
+    `My current AQI is ${aqiValue} and there is a wildfire with ${fireRadius} square kilometre being ${distanceToFire} km away from me. ` +
+    "Take all the provided information, give me a prediction about the effect of the wildfire and return only a JSON object (no extra text) with exactly these keys:\n" +
     '  • "impactedAQI": (numeric, from 1-5 inclusive, the impacted AQI here should be how much my current (location) AQI is affected by the occurrence of the wildfire based on the provided distance),\n' +
     '  • "description": (string describing the impact),\n' +
     '  • "advice": (array of strings with recommendations for affected people).\n' +
@@ -192,7 +192,8 @@ async function saveResponse(aiJson) {
 export default async function generateWildfireImpact(
   currentLon,
   currentLat,
-  distanceToFire
+  distanceToFire,
+  fireRadius
 ) {
   try {
     console.log("Starting wildfire impact analysis...");
@@ -208,7 +209,7 @@ export default async function generateWildfireImpact(
 
     // Build prompt
     console.log(" Generating AI analysis...");
-    const prompt = buildPrompt(aqiValue, distanceToFire);
+    const prompt = buildPrompt(aqiValue, distanceToFire, fireRadius);
 
     // Invoke AI model
     const resultJson = await invokeBedrockModel(prompt);
@@ -228,12 +229,12 @@ export default async function generateWildfireImpact(
 }
 
 // Legacy main function for backward compatibility
-export async function main() {
-  const result = await generateWildfireImpact();
-  if (!result.success) {
-    process.exit(1);
-  }
-}
+// export async function main() {
+//   const result = await generateWildfireImpact();
+//   if (!result.success) {
+//     process.exit(1);
+//   }
+// }
 
 // Run the main function only if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {

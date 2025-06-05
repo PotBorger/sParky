@@ -60,13 +60,16 @@ function readCoords() {
 }
 
 // ─── 4) Fetch feature values from local API ─────────────────────────────────
-async function fetchFromLocal(lat, lon) {
+async function fetchWeatherInfo(lat, lon) {
   const params = { lat, lon };
   try {
-    const resp = await axios.get("http://127.0.0.1:5001/api/currentDataClimate", {
-      params,
-      timeout: 5000,
-    });
+    const resp = await axios.get(
+      "http://127.0.0.1:5001/api/currentDataClimate",
+      {
+        params,
+        timeout: 5000,
+      }
+    );
 
     const payload = resp.data;
     if (!payload.result) {
@@ -74,13 +77,15 @@ async function fetchFromLocal(lat, lon) {
     }
     const data = payload.result;
 
-    const maxTemp = Number(data.currentMaxTemp);
-    const minTemp = Number(data.currentMinTemp);
+    const maxTemp = (5 / 9) * (Number(data.currentMaxTemp) - 32);
+    const minTemp = (5 / 9) * (Number(data.currentMinTemp) - 32);
     const precipitation = Number(data.currentPrecipitation);
-    const avgWindSpeed = Number(data.currentWindSpeed);
+    const avgWindSpeed = Number(data.currentWindSpeed) / 3.6;
 
     if ([maxTemp, minTemp, precipitation, avgWindSpeed].some(isNaN)) {
-      throw new Error("One or more returned values cannot be converted to number");
+      throw new Error(
+        "One or more returned values cannot be converted to number"
+      );
     }
 
     return { minTemp, maxTemp, precipitation, avgWindSpeed };
@@ -115,13 +120,17 @@ async function invokeSageMaker(avgTemp, precipitation, avgWindSpeed) {
       result = JSON.parse(rawBody);
     } catch {
       console.error("Received non-JSON response from container:\n", rawBody);
-      console.error(`Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`);
+      console.error(
+        `Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`
+      );
       process.exit(1);
     }
     return result;
   } catch (err) {
     console.error("Error invoking SageMaker endpoint:", err.message || err);
-    console.error(`Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`);
+    console.error(
+      `Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`
+    );
     process.exit(1);
   }
 }
@@ -139,43 +148,36 @@ async function streamToString(stream) {
 }
 
 // ─── 7) Main execution ───────────────────────────────────────────────────────
-async function runPredictWildfireRadius() {
+export default async function runPredictWildfireRadius(fireLon, fireLat) {
   console.log(">>> Starting wildfire-radius prediction script... <<<");
 
   // 1) Read coords
-  const { latitude, longitude } = readCoords();
+  const latitude = fireLat;
+  const longitude = fireLon;
   console.log(`Coordinates: lat=${latitude}, lon=${longitude}`);
 
   // 2) Fetch features
   const { minTemp, maxTemp, precipitation, avgWindSpeed } =
-    await fetchFromLocal(latitude, longitude);
-  console.log(
-    `Fetched features → minTemp=${minTemp}, maxTemp=${maxTemp}, precipitation=${precipitation}, windSpeed=${avgWindSpeed}`
-  );
+    await fetchWeatherInfo(latitude, longitude);
 
   // 3) Compute avgTemp
   const avgTemp = (minTemp + maxTemp) / 2;
-  console.log(`Computed avgTemp = ${avgTemp}`);
+  // console.log(`Computed avgTemp = ${avgTemp}`);
 
   // 4) Invoke SageMaker
-  const prediction = await invokeSageMaker(avgTemp, precipitation, avgWindSpeed);
+  const prediction = await invokeSageMaker(
+    avgTemp,
+    precipitation,
+    avgWindSpeed
+  );
 
   // 5) Extract and log only the numeric prediction value
   //    (Assuming the response JSON contains a field "predicted_label")
   if (prediction.predicted_label !== undefined) {
     console.log("Predicted wildfire radius:", prediction.predicted_label);
   } else {
-    console.log(
-      "Predicted wildfire radius (full response):",
-      prediction
-    );
+    console.log("Predicted wildfire radius (full response):", prediction);
   }
 
   return prediction;
 }
-
-// ─── 8) Invoke immediately when run via `node` ─────────────────────────────
-runPredictWildfireRadius().catch((err) => {
-  console.error("Unexpected error:", err);
-  process.exit(1);
-});

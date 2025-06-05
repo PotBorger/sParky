@@ -3,6 +3,7 @@ import runPredictWildFire from "../testAI.js";
 const API_KEY = "df23feb6c17d01620d3577d05641b174";
 import { writeFile } from "fs/promises";
 import generateWildfireImpact from "../genAI.js";
+import runPredictWildfireRadius from "../radius-predict.js";
 const getCurrentAQ = async (req, res) => {
   try {
     // Pull lat/lon from query string
@@ -86,13 +87,24 @@ const runPredict = async (req, res) => {
   }
 };
 
+const runRadius = async (req, res) => {
+  try {
+    const { fireLon, fireLat } = req.body;
+    const prediction = await runPredictWildfireRadius(fireLon, fireLat);
+    return res.json({ data: prediction });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 const runImpact = async (req, res) => {
   try {
-    const { currentLon, currentLat, distanceToFire } = req.body;
+    const { currentLon, currentLat, distanceToFire, fireRadius } = req.body;
     const impact = await generateWildfireImpact(
       currentLon,
       currentLat,
-      distanceToFire
+      distanceToFire,
+      fireRadius
     );
     return res.json({ data: impact });
   } catch (err) {
@@ -121,4 +133,5 @@ export {
   getCurrentDataClimate,
   runPredict,
   runImpact,
+  runRadius,
 };
