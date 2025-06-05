@@ -189,17 +189,18 @@ export default function AQIBar({
               </>
             )}
           </span>
-
-          <span
-            className="wildfire-probability"
-            style={{
-              color: probabilityColor,
-              fontSize: "14px",
-              marginTop: "4px",
-            }}
-          >
-            Wildfire Risk: {probability}% ({probabilityLabel})
-          </span>
+          {probability != 0 && (
+            <span
+              className="wildfire-probability"
+              style={{
+                color: probabilityColor,
+                fontSize: "14px",
+                marginTop: "4px",
+              }}
+            >
+              Wildfire Risk: {probability}% ({probabilityLabel})
+            </span>
+          )}
         </div>
 
         <div className="aqi-controls">

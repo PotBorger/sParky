@@ -45,11 +45,12 @@ export default function WildFireMap() {
     fireRadius
   ) {
     try {
-      console.log("cac to" + currentLonLat);
+      // console.log("cac to" + currentLon);
       const response = await axios.post(
         "http://localhost:5001/api/run-impact",
         { currentLon, currentLat, distanceToFire, fireRadius }
       );
+      console.log(currentLon, currentLat);
       console.log(response.data.data);
       // const impactAQI = response.data.data.impactedAQI;
       return response.data.data;
@@ -222,9 +223,12 @@ export default function WildFireMap() {
 
       geocoderControl.on("result", async ({ result }) => {
         const coord = result.geometry.coordinates; // lom,lat
-        setCurrentLonLat([coord[0], coord[1]]);
+        console.log(coord);
+        const lonLatCoord = [coord[0], coord[1]];
+        setCurrentLonLat(lonLatCoord);
+        console.log(currentLonLat);
         setUserAQ(await getcurrentLocationAQ(coord[0], coord[1]));
-        saveToJson(coord[0], coord[1]);
+        // saveToJson(coord[0], coord[1]);
         // 1) Remove any existing marker
         if (currentMarker) {
           currentMarker.remove();
@@ -469,6 +473,7 @@ export default function WildFireMap() {
             coord[0],
             coord[1]
           );
+          console.log(currentLonLat[0] + "lon");
           const impactObject = await generateImpactAtLocation(
             currentLonLat[0],
             currentLonLat[1],

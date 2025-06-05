@@ -92,7 +92,8 @@ function buildPrompt(aqiValue, distanceToFire, fireRadius) {
   return (
     `My current AQI is ${aqiValue} and there is a wildfire with ${fireRadius} square kilometre being ${distanceToFire} km away from me. ` +
     "Take all the provided information, give me a prediction about the effect of the wildfire and return only a JSON object (no extra text) with exactly these keys:\n" +
-    '  • "impactedAQI": (numeric, from 1-5 inclusive, the impacted AQI here should be how much my current (location) AQI is affected by the occurrence of the wildfire based on the provided distance),\n' +
+    "the impacted AQI here should mean how much my current (location) AQI is affected by the occurrence of the wildfire based on the provided distance and the radius of the fire. If the impact is insignificant, the returned impacted AQI should be equal to my current AQI and should not be lowered) \n" +
+    '  • "impactedAQI"(numeric, from 1-5 inclusive,\n' +
     '  • "description": (string describing the impact),\n' +
     '  • "advice": (array of strings with recommendations for affected people).\n' +
     "For example:\n" +
