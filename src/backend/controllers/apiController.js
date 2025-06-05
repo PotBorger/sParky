@@ -1,6 +1,5 @@
 import axios from "axios";
-// import { generateWildfireImpact } from "../genAI.js";
-import { runPredictWildFire } from "../testAI";
+import runPredictWildFire from "../testAI.js";
 const API_KEY = "df23feb6c17d01620d3577d05641b174";
 
 const getCurrentAQ = async (req, res) => {

@@ -1,11 +1,8 @@
-// wildfire_predict.js
-
 /**
  * Fetches four feature values via HTTP from a local API (which returns a flat JSON),
  * then sends a single-row CSV (with trailing newline) to a SageMaker real-time endpoint
  * using AWS SDK v3. Saves the prediction JSON into "prediction_result.json".
  */
-
 import fs from "fs";
 import path from "path";
 import axios from "axios";
@@ -13,7 +10,7 @@ import axios from "axios";
 // v3 imports for SageMaker Runtime
 import {
   SageMakerRuntimeClient,
-  InvokeEndpointCommand
+  InvokeEndpointCommand,
 } from "@aws-sdk/client-sagemaker-runtime";
 
 // ─── 1) Change to your real SageMaker endpoint name ─────────────────────────
@@ -66,10 +63,13 @@ async function fetchFromLocal(lat, lon) {
   const params = { lat, lon };
 
   try {
-    const resp = await axios.get("http://127.0.0.1:5001/api/currentDataClimate", {
-      params,
-      timeout: 5000,
-    });
+    const resp = await axios.get(
+      "http://127.0.0.1:5001/api/currentDataClimate",
+      {
+        params,
+        timeout: 5000,
+      }
+    );
 
     // Expecting payload like:
     // {
@@ -86,13 +86,15 @@ async function fetchFromLocal(lat, lon) {
     }
     const data = payload.result;
 
-    const maxTemp       = Number(data.currentMaxTemp);
-    const minTemp       = Number(data.currentMinTemp);
+    const maxTemp = Number(data.currentMaxTemp);
+    const minTemp = Number(data.currentMinTemp);
     const precipitation = Number(data.currentPrecipitation);
-    const avgWindSpeed  = Number(data.currentWindSpeed);
+    const avgWindSpeed = Number(data.currentWindSpeed);
 
     if ([maxTemp, minTemp, precipitation, avgWindSpeed].some(isNaN)) {
-      throw new Error("One or more returned values cannot be converted to number");
+      throw new Error(
+        "One or more returned values cannot be converted to number"
+      );
     }
 
     return { minTemp, maxTemp, precipitation, avgWindSpeed };
@@ -110,14 +112,14 @@ async function invokeSageMaker(minTemp, maxTemp, precipitation, avgWindSpeed) {
 
   // Initialize SageMakerRuntimeClient (v3)
   const smrClient = new SageMakerRuntimeClient({
-    region: process.env.AWS_REGION || "us-west-2"
+    region: process.env.AWS_REGION || "us-west-2",
   });
 
   const command = new InvokeEndpointCommand({
     EndpointName: ENDPOINT_NAME,
     ContentType: "text/csv",
     Body: payload,
-    Accept: "application/json"
+    Accept: "application/json",
   });
 
   try {
@@ -129,13 +131,17 @@ async function invokeSageMaker(minTemp, maxTemp, precipitation, avgWindSpeed) {
       result = JSON.parse(rawBody);
     } catch {
       console.error("Received non-JSON response from container:\n", rawBody);
-      console.error(`Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`);
+      console.error(
+        `Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`
+      );
       process.exit(1);
     }
     return result;
   } catch (err) {
     console.error("Error invoking SageMaker endpoint:", err.message || err);
-    console.error(`Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`);
+    console.error(
+      `Check CloudWatch logs for /aws/sagemaker/Endpoints/${ENDPOINT_NAME}`
+    );
     process.exit(1);
   }
 }
@@ -153,18 +159,21 @@ async function streamToString(stream) {
 }
 
 // ─── 7) Main execution ───────────────────────────────────────────────────────
-export async function runPredictWildFire() {
+export default async function runPredictWildFire() {
   // Load coords from src/components/currentCoord.json
   const { latitude, longitude } = readCoords();
 
   // Fetch features
-  const { minTemp, maxTemp, precipitation, avgWindSpeed } = await fetchFromLocal(
-    latitude,
-    longitude
-  );
+  const { minTemp, maxTemp, precipitation, avgWindSpeed } =
+    await fetchFromLocal(latitude, longitude);
 
   // Invoke SageMaker
-  const prediction = await invokeSageMaker(minTemp, maxTemp, precipitation, avgWindSpeed);
+  const prediction = await invokeSageMaker(
+    minTemp,
+    maxTemp,
+    precipitation,
+    avgWindSpeed
+  );
 
   // Print & save the prediction
   console.log("\nPrediction result:");
@@ -179,5 +188,3 @@ export async function runPredictWildFire() {
     process.exit(1);
   }
 }
-
-
