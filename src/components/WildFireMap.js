@@ -20,13 +20,14 @@ export default function WildFireMap() {
   const { search } = useLocation();
   const initialLocation = new URLSearchParams(search).get("initialLocation");
   const [currentLonLat, setCurrentLonLat] = useState([0.0, 0.0]);
-  const [selectedAQI, setSelectedAQI] = useState(null);
   const [userAQ, setUserAQ] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("");
   const [wildfireProbability, setWildfireProbability] = useState(0);
   const [impactedAQI, setImpactedAQI] = useState(null);
   const [safetyAdvice, setSafetyAdvice] = useState([]);
   const [healthDescription, setHealthDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   async function saveToJson(lon, lat) {
     try {
@@ -453,6 +454,8 @@ export default function WildFireMap() {
         }
 
         el.addEventListener("click", async () => {
+          setLoading(true);
+
           const coord = marker.geometry.coordinates; // [lon, lat]
           const fireRadiusPrediction = await predictFireRadiusAtLocation(
             coord[0],
@@ -514,7 +517,7 @@ export default function WildFireMap() {
           const impactDescription = impactObject.description;
           const wildfireData = calculateWildfireData(marker.properties.aqi);
           // Set all the AQI and wildfire-related state
-          setSelectedAQI(marker.properties.aqi);
+          // setSelectedAQI(marker.properties.aqi);
           setSelectedLocation(marker.properties.label);
           // setWildfireProbability(wildfireData.probability);
           const parts = probArrayString.replace(/[\[\]\s]/g, "").split(",");
@@ -525,6 +528,8 @@ export default function WildFireMap() {
           setImpactedAQI(impactOfAQI);
           setHealthDescription(impactDescription);
           setSafetyAdvice(impactAdvice);
+          setLoading(false);
+
         });
 
         new maplibregl.Marker({
@@ -537,12 +542,18 @@ export default function WildFireMap() {
     })();
 
     return () => map?.remove();
-  }, [initialLocation, setSelectedAQI, setSelectedLocation]);
+  }, [initialLocation, setSelectedLocation]);
 
   return (
     <div className="map-page-container">
       <div className="map-bar-wrapper">
         <div ref={mapContainer} className="map-container" />
+         {/* ← LOADING OVERLAY (conditionally rendered) */}
+        {loading && (
+          <div className="loading-overlay">
+            <div className="spinner" />
+          </div>
+        )}
         <AQIBar
           probability={wildfireProbability}
           currentAQI={userAQ.currentAQI}

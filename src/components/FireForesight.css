@@ -374,3 +374,35 @@ body {
   opacity: 0.5;
   cursor: default;
 }
+
+
+/* A semi‐transparent full‐screen overlay over the map */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* above map but below any popups/controls if needed */
+}
+
+/* A basic CSS spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.6);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Keyframes for spinning */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
