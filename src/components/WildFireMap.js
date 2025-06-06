@@ -19,7 +19,7 @@ export default function WildFireMap() {
   const mapContainer = useRef(null);
   const { search } = useLocation();
   const initialLocation = new URLSearchParams(search).get("initialLocation");
-  const [currentLonLat, setCurrentLonLat] = useState([0.0, 0.0]);
+  const [currentLonLat, setCurrentLonLat] = useState([-111.8451, 40.7679]);
   const [userAQ, setUserAQ] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("");
   const [wildfireProbability, setWildfireProbability] = useState(0);
@@ -225,6 +225,7 @@ export default function WildFireMap() {
         const coord = result.geometry.coordinates; // lom,lat
         console.log(coord);
         const lonLatCoord = [coord[0], coord[1]];
+        console.log(lonLatCoord);
         setCurrentLonLat(lonLatCoord);
         console.log(currentLonLat);
         setUserAQ(await getcurrentLocationAQ(coord[0], coord[1]));
@@ -427,7 +428,6 @@ export default function WildFireMap() {
 
         el.addEventListener("click", async () => {
           setLoading(true);
-
           const coord = marker.geometry.coordinates; // [lon, lat]
           const fireRadiusPrediction = await predictFireRadiusAtLocation(
             coord[0],
